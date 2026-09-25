@@ -1,3 +1,5 @@
+import { fileURLToPath } from 'node:url'
+import remarkAttrs from './content-plugins/remark-attrs.mjs'
 import tailwindcss from '@tailwindcss/vite'
 import fs from 'node:fs'
 import path from 'node:path'
@@ -65,7 +67,7 @@ export default defineNuxtConfig({
   content: {
     experimental: { sqliteConnector: 'native' },
     // Astro rendered markdown with smartypants (curly quotes, ellipses); keep that. Dashes off: no new em dashes.
-    build: { markdown: { toc: { depth: 3 }, remarkPlugins: { 'remark-smartypants': { dashes: false } } } },
+    build: { markdown: { toc: { depth: 3 }, remarkPlugins: { 'remark-smartypants': { dashes: false }, [fileURLToPath(new URL('./content-plugins/remark-attrs.mjs', import.meta.url)).replace(/\\/g, '/')]: { instance: remarkAttrs } } } },
     renderer: { anchorLinks: false },
   },
 

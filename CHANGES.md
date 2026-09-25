@@ -39,6 +39,7 @@ Review the em-dash table; if a replacement reads wrong, fix the markdown in `con
 - `server/redirects.json`: 73 single-hop rules (79 originals, minus the 8 campaign pages that are now real pages, plus the Clown post and /sitemap-index.xml). /sbiff/p/* now lands on /sbiff in one hop.
 - Videos: the three self-hosted MP4s (which 404'd on live) are now Cloudflare Stream embeds (hero reel, 1968 Stewardess College clip, About trailer). Public, no signed URLs.
 - Legal pages got an H1 from their title.
+- Special Dispatch block attributes (`## Heading {#id}`, `{.class}` under a paragraph) are applied by `content-plugins/remark-attrs.mjs`, so the in-page anchors (#start-here, #part-1, and so on) work.
 
 ## Visual deviations (parity, not redesign)
 
