@@ -1,0 +1,8 @@
+/* Tailwind v4 (theme + utilities only, no preflight, so the ported Astro CSS stays pixel-faithful). */
+@layer theme, base, components, utilities;
+@import "tailwindcss/theme.css" layer(theme);
+@import "tailwindcss/utilities.css" layer(utilities);
+
+@import "./global.css";
+@import "./ds-2026.css";
+@import "./media.css";

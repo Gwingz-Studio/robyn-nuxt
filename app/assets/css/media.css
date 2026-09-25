@@ -1,0 +1,32 @@
+/* Nuxt port additions (see CHANGES.md): Cloudflare Stream embeds.
+   The Astro markup had no layout rules for .hero__media / .archive-plate__media, and its
+   self-hosted videos 404'd, so the poster rendered twice in page flow. These rules reuse
+   the .home-hero__media values from global.css so the reel sits behind the hero copy. */
+.hero:has(.hero__media) { isolation: isolate; overflow: hidden; }
+.hero__media { position: absolute; inset: 0; z-index: -2; overflow: hidden; background: var(--gw-slate, #333f48); }
+.hero__media .hero__poster { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; object-position: center 40%; }
+.hero__media::after { content: ""; position: absolute; inset: 0; background: linear-gradient(180deg, rgba(51, 63, 72, 0.25) 0%, rgba(51, 63, 72, 0.45) 40%, rgba(51, 63, 72, 0.88) 100%), linear-gradient(90deg, rgba(51, 63, 72, 0.55) 0%, transparent 55%); }
+
+.stream-embed { position: relative; width: 100%; aspect-ratio: 16 / 9; }
+.stream-embed iframe { position: absolute; inset: 0; width: 100%; height: 100%; border: 0; }
+.stream-embed--bg { position: absolute; inset: 0; aspect-ratio: auto; pointer-events: none; overflow: hidden; }
+.stream-embed--bg iframe { top: 50%; left: 50%; width: max(100%, calc(100% * 16 / 9)); height: max(100%, calc(100vw * 9 / 16)); min-width: 177.78%; min-height: 100%; transform: translate(-50%, -50%); }
+.hero__media .stream-embed--bg iframe { min-width: max(100%, 177.78vh); min-height: max(100%, 56.25vw); width: auto; height: auto; aspect-ratio: 16 / 9; }
+
+.archive-plate__media { position: relative; aspect-ratio: 1635 / 925; overflow: hidden; }
+.archive-plate__media .archive-plate__poster { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.archive-plate__media .stream-embed--bg iframe { width: 100%; height: 100%; min-width: 0; min-height: 0; transform: none; top: 0; left: 0; }
+.archive-plate__media .stream-embed:not(.stream-embed--bg) { position: absolute; inset: 0; aspect-ratio: auto; }
+
+.film-trailer { margin: 1.5rem 0; }
+
+.dispatch-byline { font-size: var(--fs-sm); color: var(--text-muted); }
+.dispatch-kicker { margin-top: 1rem; }
+
+/* The hero reel is 16:9 with baked-in pillarbox bars; scale past them so the plane fills the band. */
+.hero__media .stream-embed--bg iframe { transform: translate(-50%, -50%) scale(1.34); }
+/* ds-2026.css references tokens that global.css never defines (--gutter); give the label and logo sane fallbacks. */
+.hero__synth-label { top: 1.5rem; right: var(--gutter, max(1rem, calc((100vw - var(--gw-max, 72rem)) / 2))); left: auto; }
+.hero__brand-mark { margin: 0; }
+.hero__brand-mark img { display: block; width: min(100%, 40rem); height: auto; }
+.hero__content { position: relative; z-index: 1; display: grid; gap: var(--gw-space-4, 1.25rem); padding-top: 4rem; }
