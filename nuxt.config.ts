@@ -64,7 +64,8 @@ export default defineNuxtConfig({
 
   content: {
     experimental: { sqliteConnector: 'native' },
-    build: { markdown: { toc: { depth: 3 } } },
+    // Astro rendered markdown with smartypants (curly quotes, ellipses); keep that. Dashes off: no new em dashes.
+    build: { markdown: { toc: { depth: 3 }, remarkPlugins: { 'remark-smartypants': { dashes: false } } } },
     renderer: { anchorLinks: false },
   },
 

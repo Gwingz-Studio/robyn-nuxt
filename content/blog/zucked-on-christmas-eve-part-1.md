@@ -450,4 +450,4 @@ To be continued in Part 2
 
 [https://www.indiedocjourney.com](https://www.indiedocjourney.com)
 
-Also filed: [Special Dispatch No. 01 - Banned on Christmas Eve](/special-dispatch/facebook-banned-on-christmas-eve/) (the full timeline, recovery steps, and what Meta would not say).
+Also filed: [Special Dispatch No. 01 - Banned on Christmas Eve](/special-dispatch/facebook-banned-on-christmas-eve) (the full timeline, recovery steps, and what Meta would not say).

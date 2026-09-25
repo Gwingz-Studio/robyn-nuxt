@@ -12,7 +12,8 @@ Review the em-dash table; if a replacement reads wrong, fix the markdown in `con
 | Mojibake sequences fixed | 5 (3 kinds) |
 | caleb@ to info@ (content) | 1 (plus JSON-LD, header, footer, contact in code) |
 | HTML entity decoded | 1 |
-| Description restored | 1 |
+| Restored text (truncated description, obfuscated email) | 2 |
+| Internal links: trailing slash removed | 3 |
 | Structural | 1 |
 
 ## Content source (decision 4)
@@ -56,7 +57,8 @@ From `E:\~GoldenWings\presskit\Images\Headshots`:
 
 - /about-the-film keeps the committed "Find a screening" line linking to gwingz.com.
 - The "Legacy Producer" video referenced in robyn-site was not migrated (not one of the three approved videos).
-- Scraped Squarespace markup: one `/cdn-cgi/l/email-protection` link in "BHIFF here we come" is kept as-is for parity (it is broken on live too).
+- Scraped Squarespace markup: the `/cdn-cgi/l/email-protection` link in "BHIFF here we come" (Cloudflare email obfuscation, dead outside the live zone) is decoded back to info@golden-wings-robyn.com.
+- Markdown renders with smartypants (curly quotes, ellipses) as Astro did; dash conversion is off so no new em dashes appear.
 
 ## Non-em-dash text changes
 
@@ -70,6 +72,10 @@ From `E:\~GoldenWings\presskit\Images\Headshots`:
 | content/site/home.md | mojibake | ├⌐ | é |
 | content/site/home.md | mojibake | ΓÇô | – |
 | content/blog/accidental-selfportraits-a-filmmakers-journey-through-time-and-memory.md:3 | restore | description: 'In a Parisian elevator in 2005, my impatient ex-boyfriend couldn' | description: "In a Parisian elevator in 2005, my impatient ex-boyfriend couldn't wait thirty seconds for my camera shot. Seventeen years later, that footage opens my documentary screening at the Palma Film Festival while he's still struggling to pay parking tickets. Sometimes creative vindication arrives in the most deliciously ironic packages." |
+| content/blog/bhiff-here-we-come.md:55 | restore | Email: [email&#160;protected](/cdn-cgi/l/email-protection#660f0800092601090a0203084b110f0801154b1409041f084805090b) | Email: [info@golden-wings-robyn.com](mailto:info@golden-wings-robyn.com) |
+| content/blog/i-sued-meta-in-small-claims-court-and-won.md:466 | link | [More dispatches from the Indie Doc Journey](/indie-doc-journey/) | [More dispatches from the Indie Doc Journey](/indie-doc-journey) |
+| content/blog/i-sued-meta-in-small-claims-court-and-won.md:477 | link | …d on Christmas Eve](/special-dispatch/facebook-banned-on-christmas-eve/) (the Christmas Eve ban timeline and recovery notes). | …d on Christmas Eve](/special-dispatch/facebook-banned-on-christmas-eve) (the Christmas Eve ban timeline and recovery notes). |
+| content/blog/zucked-on-christmas-eve-part-1.md:453 | link | …d on Christmas Eve](/special-dispatch/facebook-banned-on-christmas-eve/) (the full timeline, recovery steps, and what Meta would not say). | …d on Christmas Eve](/special-dispatch/facebook-banned-on-christmas-eve) (the full timeline, recovery steps, and what Meta would not say). |
 
 ## Em-dash replacements (135 characters, 116 lines)
 
