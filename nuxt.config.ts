@@ -80,7 +80,9 @@ export default defineNuxtConfig({
   },
 
   routeRules: {
-    ...(isProd ? {} : { '/**': { headers: { 'X-Robots-Tag': 'noindex, nofollow' } } }),
+    // Preview X-Robots-Tag is NOT a route rule: @nuxtjs/sitemap drops every URL whose route rules
+    // carry a noindex X-Robots-Tag header, which left /sitemap.xml empty. Pages get the header from
+    // server/middleware/00.edge.ts; static files get it from scripts/postbuild-headers.mjs (_headers).
     '/fonts/**': { headers: { 'access-control-allow-origin': '*', 'cache-control': 'public, max-age=31536000, immutable' } },
     '/images/**': { headers: { 'cache-control': 'public, max-age=604800, stale-while-revalidate=86400' } },
     '/blog/**': { headers: { 'cache-control': 'public, max-age=604800, stale-while-revalidate=86400' } },
