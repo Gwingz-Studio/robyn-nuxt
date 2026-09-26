@@ -244,3 +244,15 @@ Caleb's Prompt 0.5: no call-to-action buttons or links to watch the film on the 
 - Left in place for Caleb (orphaned): the `#first-cut` heading "Come see where Golden Wings began", its lede, and its fine print. Options: A remove the whole section, B keep it as text only, C Caleb rewrites it.
 - Left in place: `navCta: Watch the first cut` in content/site/chrome.md (no longer rendered anywhere), the `.nav-cta` and `.section--watch` CSS, `app/utils/funnel.ts`, and the watch buttons in the /film and /contact bodies.
 - Verified on the preview: home HTML has 0 gwingz.com links and 0 "watch the first cut" / "watch it at home"; the header on /, /film, /contact has no Watch link; sitemap has 45 URLs, all 200; noindex header and meta present; live Worker golden-wings-robyn still on 506559e9-e89b-42f9-a102-4c9a020c8653.
+
+## 2026-09-26: First-cut section removed from the home page (Prompt 0.5 follow-up, Caleb's option A)
+
+Caleb chose option A for the orphaned `#first-cut` band left by Prompt 0.5: remove the whole section. Nothing else changed (other sections, other pages, chrome.md, WatchCta.vue, funnel.ts, film/contact untouched; the unused `.section--watch` CSS stays). Preview version `bae01e97-6f79-4abc-b925-e18adfbc9375`.
+
+| File (line before edit) | Before | After |
+|---|---|---|
+| app/pages/index.vue:36-40 | `<section id="first-cut" class="section section--watch full-bleed-home">` with the h2 `p.firstCut.title`, lede `p.firstCut.lede`, fine print `p.firstCut.fine` | (removed; the hero now sits directly on the Archive 1968 section) |
+| content/site/home.md:31-34 | `firstCut:` block: `title: Come see where Golden Wings began`, `lede: Before Stewardess to Sky Queen there was a first cut. ...`, `fine: 'A word so nobody feels fooled: ...'` | (removed) |
+
+- Verified on the preview home: 0 hits (case-insensitive) for "Come see where Golden Wings began", "first cut", "watch link"; no element with id first-cut; 0 gwingz.com; sitemap 45 URLs, all 200; noindex header and meta present; live Worker golden-wings-robyn still on 506559e9-e89b-42f9-a102-4c9a020c8653.
+- Layout: hero bottom and archive top meet exactly (gap 0 px at 1440 and 390). In full-page screenshots the body's fixed background gradient only paints the first viewport height, so a pale band behind the archive heading turning white below it is a capture artifact; a normal scrolled viewport shows one continuous background.

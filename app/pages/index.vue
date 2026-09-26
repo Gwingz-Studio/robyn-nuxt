@@ -32,12 +32,6 @@ useHead({ bodyAttrs: { class: 'is-home' } })
       </div>
     </section>
 
-    <section id="first-cut" class="section section--watch full-bleed-home" aria-labelledby="first-cut-heading">
-      <h2 id="first-cut-heading" class="section__title">{{ p.firstCut.title }}</h2>
-      <p class="section__lede">{{ p.firstCut.lede }}</p>
-      <p class="section--watch__fine">{{ p.firstCut.fine }}</p>
-    </section>
-
     <section class="section archive-plate full-bleed-home" aria-labelledby="college-heading">
       <div class="archive-plate__inner">
         <div class="archive-plate__copy">

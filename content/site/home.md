@@ -28,10 +28,6 @@ hero:
       alt: Magic Silver Screen - Best Documentary Short
     - src: /images/laurels/Laurel_MAGIC_FANCY_DIRECTOR.png
       alt: Magic Silver Screen - Best First Time Director
-firstCut:
-  title: Come see where Golden Wings began
-  lede: Before Stewardess to Sky Queen there was a first cut. It traveled the festivals, brought home awards, and has finished its run, so now we get to share it with you. Tell us where to send the link and it is yours to watch tonight.
-  fine: 'A word so nobody feels fooled: this is the first cut, not the new film. The feature is still in the edit, and festivals only take films that have not been shown online, so it stays under wraps until it premieres. Your email gets you the watch link, and first word when our Kickstarter opens. Nothing else.'
 archive:
   label: Archive · 1968
   title: American Airlines Stewardess College
