@@ -36,7 +36,7 @@ View fullsize
 
 ![](/blog/a76e223ffc4b.png)
 
-A young child gazes in wonder at a glowing holographic globe surrounded by flight paths and digital aviation graphics. The scene evokes the sense of curiosity that drives the Golden Wings story, how imagination takes flight long before the first airplane ride.
+A young child gazes in wonder at a glowing holographic globe surrounded by flight routes and digital aviation graphics. The scene evokes the sense of curiosity that drives the Golden Wings story, how imagination takes flight long before the first airplane ride.
 
   My passion for documentaries was kindled by the educational programming on Nickelodeon. Shows like "Nick News with Linda Ellerbee" and nature documentaries like "National Geographic on Assignment" that aired on the channel opened my eyes to the power of visual storytelling. These Nickelodeon documentaries weren't just informative; they were engaging, visually compelling, and accessible to viewers of all ages.
 

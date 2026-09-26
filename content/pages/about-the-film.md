@@ -12,7 +12,7 @@ reason: core v1
 layout: about
 ---
 
-![](/blog/5aecd9b9e7b3.png)
+![Golden Wings: Stewardess to Sky Queen title card](/images/brand/gwssq-title-card.png)
 
 
 

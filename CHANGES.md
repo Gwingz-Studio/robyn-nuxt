@@ -200,3 +200,22 @@ Rule: em dash to comma, colon, or period depending on grammar. Before/after show
 | content/site/press-kit.md:25 | by: — Caleb Mills Stewart, Director | by: Caleb Mills Stewart, Director |
 | content/site/press-kit.md:27 | by: — Robyn Stewart, Legacy Producer | by: Robyn Stewart, Legacy Producer |
 | content/site/screenings-card.md:12 | success: You are on the list. Screenings only — we will not blow up your phone. | success: You are on the list. Screenings only. We will not blow up your phone. |
+
+## 2026-09-26: "Fifty Year Flight Path" retired, "Stewardess to Sky Queen" everywhere
+
+Caleb's call (final): every "Fifty Year Flight Path" mention (and variants) becomes "Stewardess to Sky Queen". This resolves the "Left alone" items listed above. The repo was also grepped case-insensitively for "flight path", and the generic uses were reworded so the rendered site has zero hits. URL slugs and asset filenames are unchanged. Preview version `e708d5e4-d313-47ce-b618-cf19f6de4c86`.
+
+| File | Before | After |
+|---|---|---|
+| content/people/caleb-mills-stewart.md:6 (description) | ...the director of Golden Wings / Fifty Year Flight Path, a film about his mother... | ...the director of Golden Wings: Stewardess to Sky Queen, a film about his mother... |
+| content/people/caleb-mills-stewart.md:23 (body) | What began as a classroom assignment became Golden Wings / Fifty Year Flight Path. | What began as a classroom assignment became Golden Wings: Stewardess to Sky Queen. |
+| content/site/press-kit.md:45 (credits) | [Based on, 'Golden Wings: Fifty Year Flight Path (short)'] | [Based on, 'Golden Wings: Stewardess to Sky Queen (short)'] |
+| content/pages/about-the-film.md:15 (title art) | `![](/blog/5aecd9b9e7b3.png)` ("Golden Wings 50 Year Flight Path" gold wordmark image, no alt text) | `![Golden Wings: Stewardess to Sky Queen title card](/images/brand/gwssq-title-card.png)` (the canonical GWSSQ title card from the presskit design system, added as a new file; the old image file stays in place, unreferenced) |
+| content/pages/elevate.md:141 | ...get a firsthand look at Robyn's flight path! | ...get a firsthand look at Robyn's journey! |
+| content/pages/lgbt.md:154 | ...get a firsthand look at Robyn's flight path! | ...get a firsthand look at Robyn's journey! |
+| content/pages/pride.md:170 | ...get a firsthand look at Robyn's flight path! | ...get a firsthand look at Robyn's journey! |
+| content/site/not-found.md:5 (404 lede) | That route isn’t on this flight path. | That route isn’t on this itinerary. |
+| content/blog/from-nickelodeon-to-the-sky-crafting-the-opening-for-golden-wings-documentary.md:39 | ...a glowing holographic globe surrounded by flight paths and digital aviation graphics. | ...a glowing holographic globe surrounded by flight routes and digital aviation graphics. |
+| public/images/brand/gwssq-title-card.png | (none) | New file: byte-identical copy of `GoldenWings-Design-System/assets/brand/title-card.png` (1536x1024). NuxtImg serves it as 960w/1920w WebP. |
+
+- Blog post `/indie-doc-journey/golden-wings-fifty-year-flight-path-celebrating-milestones-in-aviations-legacy`: no text change needed. Its title, meta, OG, and H1 already read "Golden Wings - Celebrating Milestones in Aviation's Legacy" (rendered with an en dash); "flight-path" survives only in the unchanged URL slug, path, canonical, and sourceUrl, per instruction.

@@ -42,7 +42,7 @@ credits:
     - [Director, Caleb Mills Stewart]
     - [Legacy Producer, Robyn Stewart]
     - [Production company, Gwingz Studios]
-    - [Based on, 'Golden Wings: Fifty Year Flight Path (short)']
+    - [Based on, 'Golden Wings: Stewardess to Sky Queen (short)']
 laurels:
   label: Festival laurels
   title: More than a dozen awards

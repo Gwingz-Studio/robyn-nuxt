@@ -138,7 +138,7 @@ We're thrilled to offer our LGBTQ+ community exclusive early access to our Kicks
 
 For just $19.71, commemorating the year Robyn took to the skies, you can dive into our VIP Perks Package! This special offer includes:
 
-✨ Early Access to a Digital Screener: Watch the Silicon Beach Layover Edition now and get a firsthand look at Robyn's flight path! Plus, receive a personal email from the director with all the juicy Tea from the premiere, darling. You will gag!
+✨ Early Access to a Digital Screener: Watch the Silicon Beach Layover Edition now and get a firsthand look at Robyn's journey! Plus, receive a personal email from the director with all the juicy Tea from the premiere, darling. You will gag!
 
 🛍️ Discounted Perks: Enjoy exclusive discounts on additional merchandise and experiences, just for being one of our earliest supporters.
 
