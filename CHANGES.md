@@ -256,3 +256,16 @@ Caleb chose option A for the orphaned `#first-cut` band left by Prompt 0.5: remo
 
 - Verified on the preview home: 0 hits (case-insensitive) for "Come see where Golden Wings began", "first cut", "watch link"; no element with id first-cut; 0 gwingz.com; sitemap 45 URLs, all 200; noindex header and meta present; live Worker golden-wings-robyn still on 506559e9-e89b-42f9-a102-4c9a020c8653.
 - Layout: hero bottom and archive top meet exactly (gap 0 px at 1440 and 390). In full-page screenshots the body's fixed background gradient only paints the first viewport height, so a pale band behind the archive heading turning white below it is a capture artifact; a normal scrolled viewport shows one continuous background.
+
+## 2026-09-26: Prompt 1, BRIEF.md added (funnel brief, no site changes)
+
+Caleb's Prompt 1: write BRIEF.md in the repo root and a FigJam funnel diagram of the same flow. Docs only. No page, component, or content file changed. Nothing deployed.
+
+| File | Change |
+|---|---|
+| BRIEF.md (new) | Who the site is for, funnel order from the nav and in-page links, page-by-page feel / learn / next step, one gwingz.com offer spot per page marked PROPOSAL (always after the story), current state per page, and open questions for Caleb. All copy quoted from the site; gaps marked `[CALEB WRITES]`. |
+| CHANGES.md | This entry. |
+
+- Current gwingz.com link counts on the preview (checked 2026-09-26): / 0, /film 2 (film.vue:13, :23), /about-the-film 2 (about-the-film.md:40), /contact 1 (contact.vue:23), /sms-opt-in 1 (sms-opt-in.md:30), two Journey posts (1 and 2), all other funnel pages 0.
+- FigJam diagram of the same flow: see the Prompt 1 report.
+- Committed locally only ("Add BRIEF.md (Prompt 1)"), not pushed. Preview stays on `bae01e97-6f79-4abc-b925-e18adfbc9375`; live Worker golden-wings-robyn untouched.
