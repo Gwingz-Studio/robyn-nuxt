@@ -225,3 +225,22 @@ Caleb's call (final): every "Fifty Year Flight Path" mention (and variants) beco
 - Root cause: the preview-only route rule `'/**': { headers: { 'X-Robots-Tag': 'noindex, nofollow' } }` in `nuxt.config.ts`. @nuxtjs/sitemap 8.5.1 drops every URL whose route rules carry a noindex X-Robots-Tag header (`runtime/server/sitemap/nitro.js`), so all 45 source URLs were filtered out and the prerendered sitemap was empty. Production builds never had the rule, so they were not affected.
 - Fix: removed that route rule. Pages still get `X-Robots-Tag: noindex, nofollow` from `server/middleware/00.edge.ts` on non-production Workers, and the new `scripts/postbuild-headers.mjs` (run by `npm run build`) appends `/*  X-Robots-Tag: noindex, nofollow` to `.output/public/_headers` on preview builds only, so static files keep the header. The noindex meta and robots.txt `Disallow: /` still come from `site.indexable: false` on preview.
 - Result: preview /sitemap.xml lists 45 absolute https://golden-wings-robyn.com URLs with no trailing slash (the home page is the root URL), and /404 and /optin are excluded. Compared with the live sitemap-0.xml (38 URLs), it keeps all of them except /optin and adds the 8 restored campaign pages. A local `SITE_ENV=production` build also outputs 45 URLs, with robots.txt Allow + Sitemap and no X-Robots-Tag. Preview version `e8639a1b-73ab-4b86-85c2-253b4e205b4a`.
+
+## 2026-09-26: Prompt 0.5, watch CTAs removed from the home page and header
+
+Caleb's Prompt 0.5: no call-to-action buttons or links to watch the film on the home page, and no Watch button in the header (house rule). Nothing was reworded. Other page bodies (/film, /contact) are untouched. Preview version `f921c401-e9a1-4e8e-9f51-6d27a09e5f26`.
+
+| File (line before edit) | Before | After |
+|---|---|---|
+| app/components/SiteHeader.vue:13 | `const ctaHref = watchUrl('nav')` | (removed) |
+| app/components/SiteHeader.vue:28-30 | `<li><a class="nav-cta" :href="ctaHref">{{ props.chrome.navCta }}</a></li>`, rendered "Watch the first cut" linking to https://gwingz.com/?utm_source=golden-wings-robyn.com&utm_medium=site&utm_campaign=first-cut&utm_content=nav, sitewide, desktop and mobile (same nav) | (removed) |
+| app/pages/index.vue:27 | Hero button "Watch the first cut, free" linking to https://gwingz.com/?...&utm_content=home-hero | (removed; the "The film" ghost button stays) |
+| app/pages/index.vue:37 | `#first-cut` section label "Watch it at home, free" | (removed) |
+| app/pages/index.vue:40-42 | `#first-cut` button "Send me the link" linking to https://gwingz.com/?...&utm_content=home-band | (removed) |
+| content/site/home.md:19 | `primaryCta: Watch the first cut, free` | (removed) |
+| content/site/home.md:33 | `label: Watch it at home, free` | (removed) |
+| content/site/home.md:36 | `cta: Send me the link` | (removed) |
+
+- Left in place for Caleb (orphaned): the `#first-cut` heading "Come see where Golden Wings began", its lede, and its fine print. Options: A remove the whole section, B keep it as text only, C Caleb rewrites it.
+- Left in place: `navCta: Watch the first cut` in content/site/chrome.md (no longer rendered anywhere), the `.nav-cta` and `.section--watch` CSS, `app/utils/funnel.ts`, and the watch buttons in the /film and /contact bodies.
+- Verified on the preview: home HTML has 0 gwingz.com links and 0 "watch the first cut" / "watch it at home"; the header on /, /film, /contact has no Watch link; sitemap has 45 URLs, all 200; noindex header and meta present; live Worker golden-wings-robyn still on 506559e9-e89b-42f9-a102-4c9a020c8653.

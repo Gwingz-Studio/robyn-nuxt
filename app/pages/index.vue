@@ -24,7 +24,6 @@ useHead({ bodyAttrs: { class: 'is-home' } })
           <li v-for="t in p.hero.timeline" :key="t.year"><b>{{ t.year }}</b><span>{{ t.text }}</span></li>
         </ol>
         <div class="hero__ctas">
-          <a class="btn btn--primary" :href="watchUrl('home-hero')" rel="noopener noreferrer">{{ p.hero.primaryCta }}</a>
           <a class="btn btn--ghost" href="/film">{{ p.hero.secondaryCta }}</a>
         </div>
       </div>
@@ -34,12 +33,8 @@ useHead({ bodyAttrs: { class: 'is-home' } })
     </section>
 
     <section id="first-cut" class="section section--watch full-bleed-home" aria-labelledby="first-cut-heading">
-      <p class="section__label">{{ p.firstCut.label }}</p>
       <h2 id="first-cut-heading" class="section__title">{{ p.firstCut.title }}</h2>
       <p class="section__lede">{{ p.firstCut.lede }}</p>
-      <div class="hero__ctas" style="margin-top: 1.5rem;">
-        <a class="btn btn--primary" :href="watchUrl('home-band')" rel="noopener noreferrer">{{ p.firstCut.cta }}</a>
-      </div>
       <p class="section--watch__fine">{{ p.firstCut.fine }}</p>
     </section>
 

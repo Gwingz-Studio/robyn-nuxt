@@ -10,7 +10,6 @@ function isCurrent(href: string) {
   }
   return p === href || p.startsWith(href + '/')
 }
-const ctaHref = watchUrl('nav')
 </script>
 
 <template>
@@ -24,9 +23,6 @@ const ctaHref = watchUrl('nav')
         <ul class="nav">
           <li v-for="item in props.chrome.nav" :key="item.href">
             <a :href="item.href" :aria-current="isCurrent(item.href) ? 'page' : undefined">{{ item.label }}</a>
-          </li>
-          <li>
-            <a class="nav-cta" :href="ctaHref" rel="noopener noreferrer">{{ props.chrome.navCta }}</a>
           </li>
         </ul>
       </nav>
