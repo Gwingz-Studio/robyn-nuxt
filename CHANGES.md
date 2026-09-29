@@ -269,3 +269,15 @@ Caleb's Prompt 1: write BRIEF.md in the repo root and a FigJam funnel diagram of
 - Current gwingz.com link counts on the preview (checked 2026-09-26): / 0, /film 2 (film.vue:13, :23), /about-the-film 2 (about-the-film.md:40), /contact 1 (contact.vue:23), /sms-opt-in 1 (sms-opt-in.md:30), two Journey posts (1 and 2), all other funnel pages 0.
 - FigJam diagram of the same flow: see the Prompt 1 report.
 - Committed locally only ("Add BRIEF.md (Prompt 1)"), not pushed. Preview stays on `bae01e97-6f79-4abc-b925-e18adfbc9375`; live Worker golden-wings-robyn untouched.
+
+## 2026-09-29: California LGBTQ Chamber member badge added to the footer
+
+Caleb asked for his California LGBTQ Chamber of Commerce member badge in the footer on every page, using his markup as given. Nothing else changed (no copy, no CSS). Preview version `ef82f64b-e9eb-45f6-b135-cf15921edc25`.
+
+| File | Change |
+|---|---|
+| app/components/SiteFooter.vue:17 (new line) | Caleb's badge markup (link to directory.calrainbowchamber.org, `target="_blank"`, hotlinked `memberbadge.png`, `style="border: none;"`) wrapped in a plain `<div>`, placed after `.site-footer__inner` as the last child of `<footer class="site-footer">`. |
+| CHANGES.md | This entry. |
+
+- Rendered on all 46 prerendered HTML pages; verified live on the preview at /, /film, /about-the-film, a Journey post and /contact. Badge image returns 200 (image/png, 200x161).
+- Open for Caleb: the img has no alt attribute (left as given); no `rel="noopener"` added (nothing required it); because the badge sits outside the footer's content container it lines up with the left viewport edge (x=0) at 1440 and 390, and the gold badge is low contrast on the amber footer.
