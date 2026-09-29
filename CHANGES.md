@@ -281,3 +281,18 @@ Caleb asked for his California LGBTQ Chamber of Commerce member badge in the foo
 
 - Rendered on all 46 prerendered HTML pages; verified live on the preview at /, /film, /about-the-film, a Journey post and /contact. Badge image returns 200 (image/png, 200x161).
 - Open for Caleb: the img has no alt attribute (left as given); no `rel="noopener"` added (nothing required it); because the badge sits outside the footer's content container it lines up with the left viewport edge (x=0) at 1440 and 390, and the gold badge is low contrast on the amber footer.
+
+## 2026-09-29: Meta Pixel (26876203855319594) added to every page
+
+Caleb asked for his Meta Pixel in the `<head>` of every page, pixel ID and script text exactly as given. Added through the site's normal Nuxt method (`app.head` in nuxt.config.ts). Nothing else changed (no CSP exists to update, no SPA tracking added). Preview version `2bd2ab1f-efa9-41bd-bcfb-fdf87e6f8faf`.
+
+| File | Change |
+|---|---|
+| nuxt.config.ts:42-48 (new lines) | `app.head.script`: one inline script whose text is Caleb's snippet verbatim (fbevents.js loader, `fbq('init', '26876203855319594')`, `fbq('track', 'PageView')`). `app.head.noscript`: Caleb's `<img height="1" width="1" src="https://www.facebook.com/tr?id=26876203855319594&ev=PageView&noscript=1"/>`, verbatim. Both render inside `<head>`. |
+| CHANGES.md | This entry. |
+
+- Build passed; copy-lint 101 files / 0 hits. Pixel script and noscript img each appear exactly once in all 46 prerendered HTML pages.
+- Verified on the preview (curl): /, /film, /about-the-film, /contact, /indie-doc-journey/swedish-film-awards-winner each have the exact script once and the noscript img once. Playwright on / and /film: fbevents.js 200, facebook.com/tr `id=26876203855319594&ev=PageView` 200. No Content-Security-Policy header or meta on the preview or live, so nothing blocks connect.facebook.net / facebook.com.
+- Client-side navigation: site header/buttons are plain `<a>` tags (full page loads, one PageView each). Markdown links (Nuxt Content NuxtLink) navigate client-side; fbevents' own history-change handling sends exactly one PageView per such route change; the pixel script is not re-run. No SPA code added.
+- Live golden-wings-robyn.com has no pixel (checked / and /film). Live Worker golden-wings-robyn untouched.
+- Open for Caleb: the `<!-- Meta Pixel Code -->` / `<!-- End Meta Pixel Code -->` HTML comments are not emitted (`app.head` cannot output comments); the noscript img sits in `<head>` as in Meta's snippet (browsers with JS off move an img in head into body when parsing; moving it to body is an option); headless browsers with the default HeadlessChrome user agent load fbevents.js but Meta sends no /tr hit (bot filtering on Meta's side); pixel also fires on the noindex preview (a SITE_ENV=production-only gate is an option); no cookie/consent banner exists.
