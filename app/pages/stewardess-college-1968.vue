@@ -24,7 +24,7 @@ useSeoPage({
 
     <div class="archive-plate__frame archive-plate__frame--page">
       <div class="archive-plate__media">
-        <NuxtImg format="webp" class="archive-plate__poster" :src="p.poster" :alt="p.alt" width="1635" height="925" sizes="xs:100vw md:1100px" loading="eager" decoding="async" />
+        <NuxtImg format="webp" class="archive-plate__poster" :provider="mediaProvider(p.poster)" :src="p.poster" :alt="p.alt" width="1635" height="925" sizes="xs:100vw md:1100px" loading="eager" decoding="async" />
         <StreamPlayer :video="p.video" :title="p.alt" :poster="p.poster" iframe-class="archive-plate__video" />
       </div>
     </div>

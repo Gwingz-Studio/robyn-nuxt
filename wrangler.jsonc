@@ -13,8 +13,12 @@
     "html_handling": "auto-trailing-slash",
     "not_found_handling": "none",
     // Worker runs first for pages (redirects, slash 301, 404, noindex). Hashed/static files skip it.
-    "run_worker_first": ["/*", "!/_nuxt/*", "!/images/*", "!/fonts/*", "!/press/*", "!/favicon.*"]
+    // /images/brand, /images/poster, /images/posters, /images/press and top-level /images files go through the
+    // Worker so press kit originals can be served from R2 (MEDIA) at their old URLs; other /images dirs skip it.
+    "run_worker_first": ["/*", "!/_nuxt/*", "!/images/archive/*", "!/images/headshots/*", "!/images/laurels/*", "!/images/people/*", "!/images/special-dispatch/*", "!/images/synth-media/*", "!/fonts/*", "!/press/*", "!/favicon.*"]
   },
+  // Byte-exact press kit originals + the dispatch PDF (media/manifest.json "r2"). Private bucket, no r2.dev.
+  "r2_buckets": [{ "binding": "MEDIA", "bucket_name": "golden-wings-robyn-media" }],
   "vars": { "FORM_ENV": "preview", "SITE_ENV": "preview" },
   // Form mail via Cloudflare Email Routing: sender forms@gwingz.com, verified destination below.
   "send_email": [{ "name": "FORMS_MAIL", "destination_address": "caleb.mills.stewart@gmail.com" }],

@@ -296,3 +296,26 @@ Caleb asked for his Meta Pixel in the `<head>` of every page, pixel ID and scrip
 - Client-side navigation: site header/buttons are plain `<a>` tags (full page loads, one PageView each). Markdown links (Nuxt Content NuxtLink) navigate client-side; fbevents' own history-change handling sends exactly one PageView per such route change; the pixel script is not re-run. No SPA code added.
 - Live golden-wings-robyn.com has no pixel (checked / and /film). Live Worker golden-wings-robyn untouched.
 - Open for Caleb: the `<!-- Meta Pixel Code -->` / `<!-- End Meta Pixel Code -->` HTML comments are not emitted (`app.head` cannot output comments); the noscript img sits in `<head>` as in Meta's snippet (browsers with JS off move an img in head into body when parsing; moving it to body is an option); headless browsers with the default HeadlessChrome user agent load fbevents.js but Meta sends no /tr hit (bot filtering on Meta's side); pixel also fires on the noindex preview (a SITE_ENV=production-only gate is an option); no cookie/consent banner exists.
+
+## 2026-09-29: Heavy media moved to Cloudflare Images + R2 (Prompt 5)
+
+Caleb's decisions from r2/INVENTORY.md: page display images go through his Cloudflare Images account; byte-exact downloads stay at their old URLs from a new private R2 bucket; the 7 unreferenced files are deleted (a copy of each was confirmed elsewhere under E:\~GoldenWings\presskit, matched by SHA-256). No page URL, copy or design changed. Preview version `b95089b0-29f3-4edd-bab7-be5aa872fa3b`.
+
+| File | Change |
+|---|---|
+| media/manifest.json (new) | Which paths now live in Cloudflare Images (51, id = path without leading slash) and in R2 bucket `golden-wings-robyn-media` (26, key = path without leading slash). |
+| app/providers/cfimages.ts (new) | @nuxt/image provider for imagedelivery.net/UG5iXh0kt-Kh8TQH83WpkA. Maps requested widths to the new named variants gwr480/gwr640/gwr960/gwr1280/gwr1920 (scale-down, width only). |
+| app/utils/media.ts (new) | `mediaProvider(src)` (cfimages for moved files, default IPX otherwise), `cfImageUrl`, `shareImageUrl` (og:image and Stream poster use the existing `public` variant for Images-only files). |
+| nuxt.config.ts | `image.providers.cfimages` registered. IPX stays the default for everything still in public/. |
+| app/components/content/ProseImg.vue, app/pages/{index,press-kit,stewardess-college-1968}.vue, app/pages/indie-doc-journey/index.vue, app/pages/people/{index,[slug]}.vue, app/pages/special-dispatch/{index,[slug]}.vue | `:provider="mediaProvider(src)"` on every NuxtImg (same width/height/sizes/densities, so the same rendered boxes). people/[slug] JSON-LD image uses the same provider. |
+| app/composables/useSeoPage.ts, app/components/StreamPlayer.vue | og:image / Stream poster go through `shareImageUrl` (only /stewardess-college-1968 og:image and the 1968 archive poster change, to the Images `public` variant; /film og:image keeps its R2-served URL). |
+| server/middleware/00.edge.ts | Serves the 26 R2 keys from binding MEDIA at their old URLs: Content-Type from R2 metadata, full Content-Length, no Content-Disposition (as before), ETag, Range (206) and If-None-Match (304); same cache-control as before (images 7d, PDF max-age=0); preview X-Robots-Tag. |
+| wrangler.jsonc | `r2_buckets` MEDIA -> golden-wings-robyn-media. `run_worker_first`: `!/images/*` replaced by excludes for /images/archive, headshots, laurels, people, special-dispatch, synth-media, so /images/brand, /images/poster, /images/posters, /images/press reach the Worker. |
+| public/ (59 files deleted) | 26 now in R2 (6 press stills incl. robyn-headshot, poster, title logo, 17 poster-gallery originals, dispatch PDF), 26 display-only files now in Images (23 /blog images, 1968 archive still, gwssq-title-card, mildred-alford-studio), 7 unreferenced files removed. Largest file left in git: public/blog/62971b9850bc.png, 2,067,006 bytes. |
+| CHANGES.md | This entry. |
+
+- Build passed; copy-lint 101 files / 0 hits; link checker 11 errors on 2 Journey posts, the same 11 as a build of this code with the files still in public/ (not caused by the move).
+- All 26 R2 downloads: full GET on the preview = 200, byte count and SHA-256 identical to the originals.
+- Sitemap 45 URLs, all 200; 497 distinct img URLs across those pages, all 200 (108 on imagedelivery.net).
+- Cloudflare Images: 51 new images (185 -> 236), 5 new variants gwr480, gwr640, gwr960, gwr1280, gwr1920. homage-06.jpg (8955x11993, over the 100 MP limit) is displayed from a 960w WebP copy of itself; its byte-exact original is in R2.
+- Open for Caleb: the wrangler token on max has no R2 permission, so the originals were copied into R2 by a one-off seed version of the preview Worker (898ce9bd…) from its own static assets with R2's SHA-256 check, then that code was removed. URLs of the 26 display-only and 7 deleted files now return 404 (no page links to them). Git history still holds every removed file.

@@ -1,4 +1,5 @@
 import { absoluteUrl, DEFAULT_OG_IMAGE, SITE_URL } from '~/utils/seo'
+import { shareImageUrl } from '~/utils/media'
 
 export interface SeoInput {
   title?: string
@@ -20,7 +21,7 @@ export function useSeoPage(o: SeoInput) {
   const description = o.description || DEFAULT_DESCRIPTION
   const path = o.path === '/' ? '/' : o.path.replace(/\/+$/, '')
   const canonical = path === '/' ? `${SITE_URL}/` : `${SITE_URL}${path}`
-  const og = o.ogImage ? absoluteUrl(o.ogImage) : DEFAULT_OG_IMAGE
+  const og = o.ogImage ? absoluteUrl(shareImageUrl(o.ogImage)!) : DEFAULT_OG_IMAGE
   const blocks = o.jsonLd ? (Array.isArray(o.jsonLd) ? o.jsonLd : [o.jsonLd]) : []
   useHead({
     title: pageTitle,

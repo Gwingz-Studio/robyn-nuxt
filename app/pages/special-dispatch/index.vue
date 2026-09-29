@@ -23,7 +23,7 @@ useSeoPage({
       <li v-for="d in p.dispatches" :key="d.href">
         <a class="post-card" :href="d.href">
           <div class="post-card__thumb">
-            <NuxtImg format="webp" :src="d.thumb" :alt="d.thumbAlt" loading="lazy" width="1200" height="630" densities="x1" />
+            <NuxtImg format="webp" :provider="mediaProvider(d.thumb)" :src="d.thumb" :alt="d.thumbAlt" loading="lazy" width="1200" height="630" densities="x1" />
           </div>
           <div class="post-card__body">
             <span class="badge" style="background:var(--gw-red);border-color:var(--gw-red);color:var(--gw-cream)">Special Dispatch № {{ d.num }}</span>

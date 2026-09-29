@@ -2,16 +2,51 @@
  * Edge rules for the Worker (runs before anything else):
  *  1. Legacy redirects (server/redirects.json, source of truth): one hop, query preserved.
  *  2. Trailing slash -> 301 to the no-slash canonical form (single hop).
- *  3. Serve prerendered HTML + public files from the ASSETS binding with cache headers,
+ *  3. Press kit originals and the dispatch PDF (media/manifest.json "r2") come byte-exact from the
+ *     R2 binding MEDIA (bucket golden-wings-robyn-media) at their original URLs.
+ *  4. Serve prerendered HTML + public files from the ASSETS binding with cache headers,
  *     a branded 404, and X-Robots-Tag noindex on non-production Workers.
- * During prerender (Node) there is no ASSETS binding, so step 3 is skipped.
+ * During prerender (Node) there is no ASSETS binding, so steps 3-4 are skipped.
  */
 import redirects from '../redirects.json'
+import manifest from '../../media/manifest.json'
 
 type Rule = { target: string, status: number }
 const RULES = redirects as Record<string, Rule>
 
 const IMAGE_RE = /\.(png|jpe?g|gif|webp|avif|svg|ico)$/i
+const R2_KEYS = new Set((manifest.r2 as string[]).map(p => p.replace(/^\//, '')))
+
+/** Serve one R2 object like the static asset it replaced: same Content-Type, full-length GET, no Content-Disposition. */
+async function serveMedia(bucket: any, key: string, method: string, reqHeaders: Headers, siteEnv?: string): Promise<Response | null> {
+  const obj = method === 'HEAD' ? await bucket.head(key) : await bucket.get(key, { range: reqHeaders, onlyIf: reqHeaders })
+  if (!obj) return null
+  const h = new Headers()
+  obj.writeHttpMetadata(h)
+  h.set('etag', obj.httpEtag)
+  h.set('accept-ranges', 'bytes')
+  // Same caching the Worker/static assets gave these paths before the move.
+  h.set('cache-control', /\.pdf$/i.test(key) ? 'public, max-age=0, must-revalidate' : 'public, max-age=604800, stale-while-revalidate=86400')
+  if (siteEnv !== 'production') h.set('X-Robots-Tag', 'noindex, nofollow')
+  if (method === 'HEAD') {
+    h.set('content-length', String(obj.size))
+    return new Response(null, { status: 200, headers: h })
+  }
+  if (!('body' in obj) || !obj.body) {
+    const conditionalGet = reqHeaders.has('if-none-match') || reqHeaders.has('if-modified-since')
+    return new Response(null, { status: conditionalGet ? 304 : 412, headers: h })
+  }
+  if (reqHeaders.has('range') && obj.range) {
+    const r = obj.range as { offset?: number, length?: number, suffix?: number }
+    const length = r.suffix !== undefined ? Math.min(r.suffix, obj.size) : (r.length ?? obj.size - (r.offset ?? 0))
+    const offset = r.suffix !== undefined ? obj.size - length : (r.offset ?? 0)
+    h.set('content-range', `bytes ${offset}-${offset + length - 1}/${obj.size}`)
+    h.set('content-length', String(length))
+    return new Response(obj.body, { status: 206, headers: h })
+  }
+  h.set('content-length', String(obj.size))
+  return new Response(obj.body, { status: 200, headers: h })
+}
 
 export default defineEventHandler(async (event) => {
   const url = getRequestURL(event)
@@ -32,6 +67,15 @@ export default defineEventHandler(async (event) => {
   if (!env?.ASSETS) return
   const method = event.method
   if (method !== 'GET' && method !== 'HEAD') return
+
+  if (env.MEDIA) {
+    let key = ''
+    try { key = decodeURIComponent(path.slice(1)) } catch { key = '' }
+    if (key && R2_KEYS.has(key)) {
+      const media = await serveMedia(env.MEDIA, key, method, toWebRequest(event).headers, env.SITE_ENV)
+      if (media) return media
+    }
+  }
 
   // Asset server canonicalizes "&" in _ipx paths to %26 with a 307; ask for the encoded form directly.
   const assetUrl = new URL(url.toString())

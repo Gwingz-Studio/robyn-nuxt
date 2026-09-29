@@ -5,7 +5,7 @@ const props = withDefaults(defineProps<{ video: string, title?: string, poster?:
   background: false,
 })
 const uid = computed(() => STREAM_VIDEOS[props.video] || props.video)
-const src = computed(() => streamIframeSrc(uid.value, { background: props.background, poster: props.poster }))
+const src = computed(() => streamIframeSrc(uid.value, { background: props.background, poster: shareImageUrl(props.poster) }))
 </script>
 
 <template>

@@ -8,14 +8,14 @@ useHead({ bodyAttrs: { class: 'is-home' } })
   <div class="page-home">
     <section class="hero full-bleed-home" aria-label="Golden Wings">
       <div class="hero__media" aria-hidden="true">
-        <NuxtImg format="webp" class="hero__poster" :src="p.hero.poster" alt="" width="1920" height="1080" fetchpriority="high" densities="x1" />
+        <NuxtImg format="webp" class="hero__poster" :provider="mediaProvider(p.hero.poster)" :src="p.hero.poster" alt="" width="1920" height="1080" fetchpriority="high" densities="x1" />
         <StreamPlayer :video="p.hero.video" background title="Golden Wings synthetic-media 747 reel" :poster="p.hero.poster" iframe-class="hero__video" />
       </div>
       <p class="plate--title plate--dark hero__synth-label"><a href="#synthetic-media">{{ p.hero.synthLabel }}</a></p>
       <div class="hero__content">
         <div class="hero__lockup">
           <p class="hero__brand-mark">
-            <NuxtImg format="webp" :src="p.hero.logo" :alt="p.hero.logoAlt" width="1200" height="336" densities="x1" />
+            <NuxtImg format="webp" :provider="mediaProvider(p.hero.logo)" :src="p.hero.logo" :alt="p.hero.logoAlt" width="1200" height="336" densities="x1" />
           </p>
           <p class="plate--title"><span class="w-red">Stewardess</span> to <span class="w-blue">Sky Queen</span></p>
         </div>
@@ -42,7 +42,7 @@ useHead({ bodyAttrs: { class: 'is-home' } })
         </div>
         <div class="archive-plate__frame">
           <div class="archive-plate__media">
-            <NuxtImg format="webp" class="archive-plate__poster" :src="p.archive.poster" :alt="p.archive.alt" width="1635" height="925" sizes="xs:100vw md:800px" loading="lazy" decoding="async" />
+            <NuxtImg format="webp" class="archive-plate__poster" :provider="mediaProvider(p.archive.poster)" :src="p.archive.poster" :alt="p.archive.alt" width="1635" height="925" sizes="xs:100vw md:800px" loading="lazy" decoding="async" />
             <StreamPlayer :video="p.archive.video" background :title="p.archive.alt" :poster="p.archive.poster" iframe-class="archive-plate__video" />
           </div>
         </div>
@@ -57,7 +57,7 @@ useHead({ bodyAttrs: { class: 'is-home' } })
           <p class="graduation-plate__lede">{{ p.graduation.lede }}</p>
         </div>
         <figure class="graduation-plate__frame">
-          <NuxtImg format="webp" class="graduation-plate__img" :src="p.graduation.image" :alt="p.graduation.alt" sizes="xs:100vw md:352px" loading="lazy" />
+          <NuxtImg format="webp" class="graduation-plate__img" :provider="mediaProvider(p.graduation.image)" :src="p.graduation.image" :alt="p.graduation.alt" sizes="xs:100vw md:352px" loading="lazy" />
         </figure>
       </div>
     </section>
@@ -85,7 +85,7 @@ useHead({ bodyAttrs: { class: 'is-home' } })
           </div>
         </div>
         <a class="poster-plate__frame" :href="p.poster.src" download="GWSSQ_Poster_2026.png" aria-label="Download the official poster">
-          <NuxtImg format="webp" class="poster-plate__img" :src="p.poster.src" :alt="p.poster.alt" width="1083" height="1452" sizes="xs:100vw md:540px" loading="lazy" decoding="async" />
+          <NuxtImg format="webp" class="poster-plate__img" :provider="mediaProvider(p.poster.src)" :src="p.poster.src" :alt="p.poster.alt" width="1083" height="1452" sizes="xs:100vw md:540px" loading="lazy" decoding="async" />
         </a>
       </div>
     </section>

@@ -27,7 +27,7 @@ useSeoPage({
     <ul class="people-grid">
       <li v-for="person in list" :key="person.slug">
         <a class="people-card" :href="`/people/${person.slug}`">
-          <NuxtImg format="webp" v-if="person.portrait" class="people-card__img" :src="person.portrait" :alt="person.portraitAlt || ''" width="480" sizes="xs:90vw sm:480px md:256px" />
+          <NuxtImg format="webp" v-if="person.portrait" class="people-card__img" :provider="mediaProvider(person.portrait)" :src="person.portrait" :alt="person.portraitAlt || ''" width="480" sizes="xs:90vw sm:480px md:256px" />
           <span v-else class="people-card__img people-card__img--empty" aria-hidden="true">{{ initials(person.name) }}</span>
           <span class="people-card__role">{{ person.role }}</span>
           <h2 class="people-card__name">{{ person.name }}</h2>

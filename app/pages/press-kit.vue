@@ -80,7 +80,7 @@ const em = (s: string) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
       <p class="prose" style="margin-bottom:1.5rem">{{ p.stills.intro }}</p>
       <div class="pk-grid-3">
         <figure v-for="s in p.stills.items" :key="s.src" class="still-card">
-          <NuxtImg format="webp" :src="s.src" :alt="s.caption" width="640" loading="lazy" />
+          <NuxtImg format="webp" :provider="mediaProvider(s.src)" :src="s.src" :alt="s.caption" width="640" loading="lazy" />
           <figcaption><span>{{ s.caption }}</span><span class="still-card__credit"><span>{{ p.stills.credit }}</span><a :href="s.src" download>↓ Download</a></span></figcaption>
         </figure>
       </div>
@@ -100,7 +100,7 @@ const em = (s: string) => String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;')
       <p class="prose" style="margin-bottom:1.5rem">{{ p.posters.intro }}</p>
       <div class="poster-gallery">
         <a v-for="f in p.posters.files" :key="f" :href="`/images/posters/${f}`" target="_blank" rel="noopener">
-          <NuxtImg format="webp" :src="`/images/posters/${f}`" :alt="p.posters.alt" width="480" loading="lazy" />
+          <NuxtImg format="webp" :provider="mediaProvider(`/images/posters/${f}`)" :src="`/images/posters/${f}`" :alt="p.posters.alt" width="480" loading="lazy" />
         </a>
       </div>
     </section>

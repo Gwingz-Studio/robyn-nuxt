@@ -50,7 +50,7 @@ const shown = (tags: string[]) => active.value === 'All' || tags.includes(active
       <li v-for="post in list" v-show="shown(post.tags)" :key="post.slug" :data-tags="post.tags.join('|') || 'All'">
         <a class="post-card" :href="`/indie-doc-journey/${post.slug}`">
           <div class="post-card__thumb">
-            <NuxtImg format="webp" v-if="post.img && post.img.startsWith('/')" :src="post.img" alt="" width="480" loading="lazy" />
+            <NuxtImg format="webp" v-if="post.img && post.img.startsWith('/')" :provider="mediaProvider(post.img)" :src="post.img" alt="" width="480" loading="lazy" />
             <img v-else-if="post.img" :src="post.img" alt="" loading="lazy">
             <span v-else class="post-card__thumb--empty">Golden Wings</span>
           </div>

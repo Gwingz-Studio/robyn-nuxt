@@ -84,6 +84,10 @@ export default defineNuxtConfig({
     quality: 78,
     densities: [1, 2],
     screens: { xs: 320, sm: 480, md: 768, lg: 1024, xl: 1280, xxl: 1536, '2xl': 1536 },
+    // Heavy media moved off the repo (media/manifest.json) is shown through Cloudflare Images.
+    providers: {
+      cfimages: { provider: '~/providers/cfimages.ts', options: { baseURL: 'https://imagedelivery.net/UG5iXh0kt-Kh8TQH83WpkA' } },
+    },
   },
 
   routeRules: {

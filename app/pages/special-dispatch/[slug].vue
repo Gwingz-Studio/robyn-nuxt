@@ -30,7 +30,7 @@ useSeoPage({
     <p class="section__label plate--subtitle">{{ p.eyebrow }}</p>
     <h1>{{ p.h1 }}</h1>
     <figure style="margin: 1.25rem 0 1.75rem;">
-      <NuxtImg format="webp" :src="p.ogImage" :alt="p.featuredAlt" width="1024" height="768" densities="x1" loading="eager" decoding="async" style="width: 100%; height: auto; display: block;" />
+      <NuxtImg format="webp" :provider="mediaProvider(p.ogImage)" :src="p.ogImage" :alt="p.featuredAlt" width="1024" height="768" densities="x1" loading="eager" decoding="async" style="width: 100%; height: auto; display: block;" />
     </figure>
     <ContentRenderer :value="page" />
   </article>

@@ -5,7 +5,7 @@ const { data: person } = await useAsyncData(`person-${slug}`, () => queryCollect
 if (!person.value) throw createError({ statusCode: 404, statusMessage: 'Page not found', fatal: true })
 const p = computed(() => ({ ...((person.value as any).meta || {}), ...(person.value as any) }))
 const img = useImage()
-const portraitUrl = p.value.portrait ? img(p.value.portrait, { width: 720, format: 'webp' }) : undefined
+const portraitUrl = p.value.portrait ? img(p.value.portrait, { width: 720, format: 'webp' }, { provider: mediaProvider(p.value.portrait) }) : undefined
 useSeoPage({
   title: p.value.name,
   description: p.value.description,
@@ -23,7 +23,7 @@ useSeoPage({
         <p v-if="p.years" class="person__years mono">{{ p.years }}</p>
         <p class="person__lede">{{ p.lede }}</p>
       </div>
-      <NuxtImg format="webp" v-if="p.portrait" class="person__portrait" :src="p.portrait" :alt="p.portraitAlt || ''" width="720" sizes="xs:90vw sm:720px md:320px" loading="eager" />
+      <NuxtImg format="webp" v-if="p.portrait" class="person__portrait" :provider="mediaProvider(p.portrait)" :src="p.portrait" :alt="p.portraitAlt || ''" width="720" sizes="xs:90vw sm:720px md:320px" loading="eager" />
     </header>
     <div class="prose">
       <ContentRenderer :value="person" />
