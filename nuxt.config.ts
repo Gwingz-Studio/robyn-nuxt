@@ -3,6 +3,7 @@ import remarkAttrs from './content-plugins/remark-attrs.mjs'
 import tailwindcss from '@tailwindcss/vite'
 import fs from 'node:fs'
 import path from 'node:path'
+import { parse as parseYaml } from 'yaml'
 
 // SITE_ENV=production only at cutover. Anything else builds a noindex preview.
 const isProd = process.env.SITE_ENV === 'production'
@@ -19,10 +20,31 @@ const contentRoutes = [
 ]
 for (const r of contentRoutes) if (redirects[r]) throw new Error(`Redirect key collides with a real page: ${r}`)
 
+// Storyblok-edited pages: server-rendered on the Worker (published story; draft inside the Visual
+// Editor), so they are kept out of prerendering but stay in the sitemap.
+const storyblokRoutes = ['/', '/film', '/about-the-film', '/press-kit']
+const prerenderRoutes = contentRoutes.filter(r => !storyblokRoutes.includes(r))
+
+// Header/footer copy from content/site/chrome.md, bundled so SSR pages need no content database.
+const chromeMd = fs.readFileSync(path.resolve('content/site/chrome.md'), 'utf8')
+const siteChrome = parseYaml(chromeMd.split(/^---\s*$/m)[1] || '') as Record<string, unknown>
+
 export default defineNuxtConfig({
   compatibilityDate: '2026-07-22',
   devtools: { enabled: false },
-  modules: ['@nuxt/content', '@nuxt/image', '@nuxtjs/robots', '@nuxtjs/sitemap', 'nuxt-link-checker'],
+  modules: ['@nuxt/content', '@nuxt/image', '@nuxtjs/robots', '@nuxtjs/sitemap', 'nuxt-link-checker', '@storyblok/nuxt'],
+
+  // Storyblok (space 295612352463495, EU). The delivery token is server-only: set at runtime from
+  // NUXT_STORYBLOK_ACCESS_TOKEN (.env locally, Worker secret on the preview Worker). Never in the client bundle.
+  storyblok: {
+    accessToken: '',
+    enableServerClient: true,
+    bridge: true,
+    apiOptions: { region: 'eu' },
+    componentsDir: '~/storyblok',
+  },
+
+  appConfig: { siteChrome },
   css: ['~/assets/css/main.css'],
   vite: { plugins: [tailwindcss()] },
 
@@ -106,9 +128,10 @@ export default defineNuxtConfig({
       crawlLinks: true,
       autoSubfolderIndex: false,
       failOnError: true,
-      routes: [...contentRoutes, '/404', '/robots.txt', '/sitemap.xml'],
+      routes: [...prerenderRoutes, '/404', '/robots.txt', '/sitemap.xml'],
       ignore: [
         '/api',
+        (p: string) => storyblokRoutes.includes(p.replace(/[?#].*$/, '').replace(/\/+$/, '') || '/'),
         '/cdn-cgi',
         (p: string) => !!redirects[p.replace(/\/+$/, '') || '/'],
         /^\/indie-doc-journey\/(category|tag)\//,

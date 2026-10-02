@@ -6,6 +6,8 @@
  *     R2 binding MEDIA (bucket golden-wings-robyn-media) at their original URLs.
  *  4. Serve prerendered HTML + public files from the ASSETS binding with cache headers,
  *     a branded 404, and X-Robots-Tag noindex on non-production Workers.
+ *  5. The Storyblok-edited pages (/, /film, /about-the-film, /press-kit) are server-rendered by Nuxt,
+ *     not served from ASSETS; they get the same noindex header and no-cache HTML policy.
  * During prerender (Node) there is no ASSETS binding, so steps 3-4 are skipped.
  */
 import redirects from '../redirects.json'
@@ -16,6 +18,7 @@ const RULES = redirects as Record<string, Rule>
 
 const IMAGE_RE = /\.(png|jpe?g|gif|webp|avif|svg|ico)$/i
 const R2_KEYS = new Set((manifest.r2 as string[]).map(p => p.replace(/^\//, '')))
+const STORYBLOK_PAGES = new Set(['/', '/film', '/about-the-film', '/press-kit'])
 
 /** Serve one R2 object like the static asset it replaced: same Content-Type, full-length GET, no Content-Disposition. */
 async function serveMedia(bucket: any, key: string, method: string, reqHeaders: Headers, siteEnv?: string): Promise<Response | null> {
@@ -64,6 +67,12 @@ export default defineEventHandler(async (event) => {
   }
 
   const env = (event.context as any).cloudflare?.env
+  if (STORYBLOK_PAGES.has(path)) {
+    if (env && env.SITE_ENV !== 'production') setResponseHeader(event, 'X-Robots-Tag', 'noindex, nofollow')
+    // Inside the Visual Editor (draft content) never cache; public pages revalidate every time.
+    setResponseHeader(event, 'cache-control', url.searchParams.has('_storyblok') ? 'private, no-store' : 'public, max-age=0, must-revalidate')
+    return
+  }
   if (!env?.ASSETS) return
   const method = event.method
   if (method !== 'GET' && method !== 'HEAD') return
