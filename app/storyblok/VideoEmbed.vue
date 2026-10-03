@@ -13,7 +13,7 @@ const hasBody = computed(() => !richTextIsEmpty(b.value.body))
       </div>
       <div class="sb-videoblock__media">
         <h2 v-if="b.heading && b.layout === 'side'" class="sb-title sb-title--monument sb-videoblock__label">{{ b.heading }}</h2>
-        <SbVideo :video="b.video" :poster="poster" :title="b.heading || 'Golden Wings video'" />
+        <SbVideo :video="b.video" :poster="poster" :autoplay="!!b.autoplay" :title="b.heading || 'Golden Wings video'" />
       </div>
       <div v-if="b.layout !== 'side'" class="sb-stack__copy">
         <h2 v-if="b.heading" class="sb-title sb-title--monument">{{ b.heading }}</h2>

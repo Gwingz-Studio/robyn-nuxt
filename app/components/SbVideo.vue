@@ -3,9 +3,10 @@
  * One video field for editors: a Cloudflare Stream video ID (32 hex characters) or a video URL
  * (.mp4/.webm, or an HLS .m3u8 playlist, played with hls.js where the browser has no native HLS).
  * `background` = muted autoplay loop with no controls.
+ * `autoplay` = muted autoplay on page load with controls visible (browsers only autoplay muted video).
  */
-const props = withDefaults(defineProps<{ video?: string, poster?: string, background?: boolean, title?: string }>(), {
-  video: '', poster: '', background: false, title: 'Golden Wings video',
+const props = withDefaults(defineProps<{ video?: string, poster?: string, background?: boolean, autoplay?: boolean, title?: string }>(), {
+  video: '', poster: '', background: false, autoplay: false, title: 'Golden Wings video',
 })
 const v = computed(() => String(props.video || '').trim())
 const isStream = computed(() => /^[a-f0-9]{32}$/i.test(v.value))
@@ -13,6 +14,7 @@ const isHls = computed(() => /\.m3u8(\?|$)/i.test(v.value))
 const streamSrc = computed(() => {
   const q = new URLSearchParams()
   if (props.background) { q.set('autoplay', 'true'); q.set('muted', 'true'); q.set('loop', 'true'); q.set('controls', 'false') }
+  else if (props.autoplay) { q.set('autoplay', 'true'); q.set('muted', 'true'); q.set('preload', 'true'); q.set('loop', 'true') }
   else { q.set('preload', 'true'); q.set('loop', 'true') }
   if (props.poster) q.set('poster', props.poster.startsWith('http') ? props.poster : `https://golden-wings-robyn.com${props.poster}`)
   return `https://${STREAM_CUSTOMER}.cloudflarestream.com/${v.value}/iframe?${q.toString()}`
@@ -41,7 +43,7 @@ onBeforeUnmount(() => hls?.destroy())
       v-if="isStream"
       :src="streamSrc"
       :title="title"
-      loading="lazy"
+      :loading="background || autoplay ? undefined : 'lazy'"
       allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture; fullscreen"
       allowfullscreen
       :tabindex="background ? -1 : undefined"
@@ -52,9 +54,9 @@ onBeforeUnmount(() => hls?.destroy())
       ref="el"
       :src="isHls ? undefined : v"
       :poster="poster || undefined"
-      :autoplay="background"
-      :muted="background"
-      :loop="background"
+      :autoplay="background || autoplay"
+      :muted="background || autoplay"
+      :loop="background || autoplay"
       :controls="!background"
       playsinline
       preload="metadata"
