@@ -1,5 +1,6 @@
 /**
- * Storyblok story for the four editable pages (/, /film, /about-the-film, /press-kit).
+ * Storyblok story for the four editable pages (/, /film, /about-the-film, /press-kit),
+ * plus the non-routable `site-settings` story (gwingz band copy) used by GwingzBand.
  *
  * Published content by default. Draft content only when the request carries a valid
  * Storyblok Visual Editor signature (_storyblok_tk: sha1(space_id:preview_token:timestamp),
@@ -9,7 +10,7 @@
 import { createHash } from 'node:crypto'
 import { serverStoryblokClient } from '#storyblok/server'
 
-const SLUGS = new Set(['home', 'film', 'about-the-film', 'press-kit'])
+const SLUGS = new Set(['home', 'film', 'about-the-film', 'press-kit', 'site-settings'])
 const SPACE_ID = '295612352463495'
 
 function validEditorToken(q: Record<string, any>, accessToken: string): boolean {
