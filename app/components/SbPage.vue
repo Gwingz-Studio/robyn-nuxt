@@ -27,9 +27,35 @@ if (error.value || !data.value?.story) {
 
 const story = ref<any>(data.value.story)
 const content = computed(() => story.value?.content || {})
-const body = computed<any[]>(() => (content.value.body || []).filter((b: any) => b && b.component))
+/*
+ * Page-level HERO VIDEO (Storyblok field `background_image`, renamed by Caleb). When set it is the
+ * page's hero, like the old Squarespace hero (muted autoplay loop, cover, no controls):
+ *  - page has a hero block: a video replaces that block's background_video (its photo stays as the
+ *    poster/fallback); an image becomes the hero's photo (the block's own video, if any, still plays).
+ *  - no hero block: a video-only hero (existing Hero block, "tall") is rendered at the top.
+ * Empty field = the blocks exactly as authored. The field is no longer a page background image.
+ */
+const VIDEO_URL = /\.(mp4|webm|mov|m4v|m3u8)(\?|#|$)/i
+const pageMedia = computed(() => {
+  const asset = content.value.background_image
+  const url = String(asset?.filename || '').trim()
+  if (!url) return null
+  return { url, asset, isVideo: /^[a-f0-9]{32}$/i.test(url) || VIDEO_URL.test(url) }
+})
+const body = computed<any[]>(() => {
+  const list = (content.value.body || []).filter((b: any) => b && b.component)
+  const m = pageMedia.value
+  if (!m) return list
+  const apply = (h: any) => m.isVideo ? { ...h, background_video: m.url } : { ...h, background_image: m.asset }
+  const i = list.findIndex((b: any) => b.component === 'hero')
+  if (i >= 0) return list.map((b: any, j: number) => j === i ? apply(b) : b)
+  const pageHero = { component: 'hero', _uid: `page-hero-${story.value?.id || props.slug}`, title: '', show_title: false, height: 'tall', laurels: [], logo: { filename: '' }, background_image: { filename: '' }, background_video: '' }
+  return [apply(pageHero), ...list]
+})
 
-const pageBg = computed(() => content.value.background_image?.filename ? { backgroundImage: `linear-gradient(rgba(51, 63, 72, 0.84), rgba(51, 63, 72, 0.84)), url("${sbImg(content.value.background_image, 1920)}")` } : undefined)
+// About the Film sits on the slate ground of mockup v2 (this used to come from the page background
+// image field, which is now the hero video).
+const darkGround = computed(() => props.slug === 'about-the-film')
 
 // SEO from the story's SEO fields (seeded with the site's existing titles/descriptions).
 const seo = content.value
@@ -62,8 +88,7 @@ defineExpose({ story })
 <template>
   <div
     v-editable="content"
-    :class="['sb-page', `sb-page--${slug}`, content.background_image?.filename ? 'sb-page--bg' : '']"
-    :style="pageBg"
+    :class="['sb-page', `sb-page--${slug}`, darkGround ? 'sb-page--bg' : '']"
   >
     <StoryblokComponent v-for="blok in body" :key="blok._uid" :blok="blok" />
     <GwingzBand :page="band" />

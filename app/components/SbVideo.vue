@@ -34,7 +34,7 @@ async function attach() {
   const video = el.value
   if (!video) return
   const src = hlsUrl.value
-  if (!src) { kick(video); return }
+  if (!src) { hls?.destroy(); hls = null; kick(video); return }
   if (video.canPlayType('application/vnd.apple.mpegurl')) { video.src = src; kick(video); return }
   const { default: Hls } = await import('hls.js')
   if (!Hls.isSupported()) return
