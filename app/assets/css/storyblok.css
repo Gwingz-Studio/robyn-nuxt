@@ -219,3 +219,27 @@
 .gw-band__btn { min-height: 70px; min-width: 182px; font-size: 16px; }
 
 .site-main--sb { width: 100%; max-width: none; margin: 0; padding: 0; }
+
+/* ---------- per-section colour overrides (block Style tab) ----------
+   Classes and custom properties exist only when a colour is picked, so unset = theme look. */
+.sb-section.sb-c--bg, .sb-hero.sb-c--bg { background-color: var(--sb-c-bg) !important; }
+.sb-section.sb-c--text,
+.sb-section.sb-c--text .sb-rt,
+.sb-section.sb-c--text .sb-rt p,
+.sb-section.sb-c--text .sb-rt li,
+.sb-section.sb-c--text .sb-intro,
+.sb-section.sb-c--text .sb-gallery__body { color: var(--sb-c-text) !important; }
+.sb-section.sb-c--heading .sb-title,
+.sb-section.sb-c--heading .sb-plate,
+.sb-section.sb-c--heading .sb-rt h2,
+.sb-section.sb-c--heading .sb-rt h3,
+.sb-section.sb-c--heading .sb-rt h4,
+.sb-section.sb-c--heading .sb-gallery__body h2,
+.sb-section.sb-c--heading .sb-gallery__body h3,
+.sb-hero.sb-c--heading .sb-hero__title { color: var(--sb-c-heading) !important; }
+.sb-section.sb-c--btn .sb-btn--primary,
+.sb-section.sb-c--btn .btn--primary { background: var(--sb-c-btn) !important; border-color: var(--sb-c-btn) !important; }
+.sb-section.sb-c--btn .sb-btn--primary:hover,
+.sb-section.sb-c--btn .btn--primary:hover { filter: brightness(0.92); }
+.sb-section.sb-c--btn-text .sb-btn,
+.sb-section.sb-c--btn-text .btn { color: var(--sb-c-btn-text) !important; }

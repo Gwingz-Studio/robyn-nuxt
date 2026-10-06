@@ -14,6 +14,8 @@ const tk = computed(() => {
   for (const k of ['_storyblok_tk[space_id]', '_storyblok_tk[timestamp]', '_storyblok_tk[token]']) {
     if (typeof q[k] === 'string') out[k] = q[k] as string
   }
+  // The story open in the Visual Editor (used by the server only with a valid signature).
+  if (typeof q._storyblok === 'string' && /^\d+$/.test(q._storyblok) && out['_storyblok_tk[token]']) out.id = q._storyblok
   return out
 })
 

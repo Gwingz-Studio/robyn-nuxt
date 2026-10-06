@@ -38,6 +38,20 @@ export default defineEventHandler(async (event) => {
     ? { version: 'draft', cv: Date.now() }
     : { version: 'published', cv: Math.floor(Date.now() / 60000) * 60 }
   try {
+    // Inside the Visual Editor (signed draft only) render the story being edited, by its ID, so
+    // any page story can be previewed at a page route (e.g. a throwaway test story). Non-page
+    // stories (Site settings) and unknown IDs fall back to the route's own story.
+    const editId = String(q.id || '')
+    if (draft && /^\d{1,20}$/.test(editId)) {
+      try {
+        const byId: any = await client.get(`cdn/stories/${editId}`, params)
+        if (byId?.data?.story?.content?.component === 'page') {
+          setResponseHeader(event, 'cache-control', 'private, no-store')
+          return { story: byId.data.story, draft }
+        }
+      }
+      catch { /* fall through to the route's story */ }
+    }
     const res: any = await client.get(`cdn/stories/${slug}`, params)
     setResponseHeader(event, 'cache-control', 'private, no-store')
     return { story: res.data.story, draft }

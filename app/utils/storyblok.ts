@@ -170,12 +170,50 @@ export function richTextIsEmpty(doc: any): boolean {
 /** Section wrapper classes shared by the blocks (theme ground, wave edge). */
 export function sectionClasses(blok: any, base: string) {
   const theme = blok.theme || 'none'
-  return [base, 'sb-section', `sb-theme--${theme}`, { 'sb-section--wave': blok.divider_top === 'wave', 'sb-section--bg': !!blok.background_image?.filename }]
+  return [base, 'sb-section', `sb-theme--${theme}`, { 'sb-section--wave': blok.divider_top === 'wave', 'sb-section--bg': !!blok.background_image?.filename }, ...colorClasses(blok)]
 }
 
 export function sectionStyle(blok: any) {
   const bg = blok.background_image?.filename ? sbImg(blok.background_image, 1920) : ''
-  return bg ? { backgroundImage: `url("${bg}")` } : undefined
+  const style: Record<string, string> = { ...colorVars(blok) }
+  if (bg) style.backgroundImage = `url("${bg}")`
+  return Object.keys(style).length ? style : undefined
+}
+
+/*
+ * Per-section colour overrides from the block's Style tab. Each colour is a dropdown of
+ * style-guide colours (blank = theme default, "custom" = use the code field) plus a
+ * `<key>_custom` text field. A valid hex code in the text field wins over the dropdown;
+ * anything that is not #rgb, #rrggbb or #rrggbbaa is ignored. Nothing set = no class and
+ * no inline style, so the theme look is exactly unchanged.
+ */
+const HEX_COLOR = /^#(?:[0-9a-f]{3}|[0-9a-f]{6}|[0-9a-f]{8})$/i
+const COLOR_KEYS: Array<[key: string, cssVar: string, cls: string]> = [
+  ['heading_color', '--sb-c-heading', 'sb-c--heading'],
+  ['text_color', '--sb-c-text', 'sb-c--text'],
+  ['background_color', '--sb-c-bg', 'sb-c--bg'],
+  ['button_color', '--sb-c-btn', 'sb-c--btn'],
+  ['button_text_color', '--sb-c-btn-text', 'sb-c--btn-text'],
+]
+
+export function sbColor(blok: any, key: string): string | undefined {
+  const custom = String(blok?.[`${key}_custom`] ?? '').trim()
+  if (HEX_COLOR.test(custom)) return custom
+  const pick = String(blok?.[key] ?? '').trim()
+  return HEX_COLOR.test(pick) ? pick : undefined
+}
+
+export function colorVars(blok: any): Record<string, string> {
+  const out: Record<string, string> = {}
+  for (const [key, cssVar] of COLOR_KEYS) {
+    const c = sbColor(blok, key)
+    if (c) out[cssVar] = c
+  }
+  return out
+}
+
+export function colorClasses(blok: any): string[] {
+  return COLOR_KEYS.filter(([key]) => sbColor(blok, key)).map(([, , cls]) => cls)
 }
 
 export function badgeList(s?: string): string[] {
