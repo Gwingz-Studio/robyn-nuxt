@@ -4,7 +4,9 @@
  * (.mp4/.webm, or an HLS .m3u8 playlist, played with hls.js where the browser has no native HLS).
  * `background` = muted autoplay loop with no controls, as a native <video> that fills its box (object-fit: cover).
  *   A Stream ID in background mode plays its HLS manifest natively (no iframe).
- * `autoplay` = muted autoplay on page load with controls visible (browsers only autoplay muted video).
+ * `autoplay` = muted autoplay with controls visible (browsers only autoplay muted video). A Stream
+ *   autoplay embed is only loaded when it comes near the viewport, then plays muted as before; the
+ *   empty frame keeps the same box until then, so nothing on the page moves.
  */
 const props = withDefaults(defineProps<{ video?: string, poster?: string, background?: boolean, autoplay?: boolean, title?: string }>(), {
   video: '', poster: '', background: false, autoplay: false, title: 'Golden Wings video',
@@ -25,6 +27,20 @@ const streamSrc = computed(() => {
   return `https://${STREAM_CUSTOMER}.cloudflarestream.com/${v.value}/iframe?${q.toString()}`
 })
 const el = ref<HTMLVideoElement | null>(null)
+const root = ref<HTMLElement | null>(null)
+// Autoplay Stream iframes wait until they are within ~400px of the viewport (saves the player
+// script on load); click-to-play iframes keep the browser's own lazy loading.
+const near = ref(false)
+const iframeSrc = computed(() => (!props.autoplay || near.value ? streamSrc.value : undefined))
+let io: IntersectionObserver | null = null
+function watchNear() {
+  if (io || !useIframe.value || !props.autoplay || near.value || !root.value) return
+  if (typeof IntersectionObserver === 'undefined') { near.value = true; return }
+  io = new IntersectionObserver((entries) => {
+    if (entries.some(e => e.isIntersecting)) { near.value = true; io?.disconnect(); io = null }
+  }, { rootMargin: '400px 0px' })
+  io.observe(root.value)
+}
 let hls: any = null
 function kick(video: HTMLVideoElement) {
   if (!props.background && !props.autoplay) return
@@ -45,16 +61,17 @@ async function attach() {
   hls.attachMedia(video)
   hls.on(Hls.Events.MANIFEST_PARSED, () => kick(video))
 }
-onMounted(attach)
+onMounted(() => { attach(); watchNear() })
 watch(v, () => nextTick(attach))
-onBeforeUnmount(() => hls?.destroy())
+watch([useIframe, () => props.autoplay], () => nextTick(watchNear))
+onBeforeUnmount(() => { hls?.destroy(); io?.disconnect() })
 </script>
 
 <template>
-  <div v-if="v" :class="['sb-video', { 'sb-video--bg': background }]">
+  <div v-if="v" ref="root" :class="['sb-video', { 'sb-video--bg': background }]">
     <iframe
       v-if="useIframe"
-      :src="streamSrc"
+      :src="iframeSrc"
       :title="title"
       :loading="autoplay ? undefined : 'lazy'"
       allow="accelerometer; gyroscope; autoplay; encrypted-media; picture-in-picture; fullscreen"

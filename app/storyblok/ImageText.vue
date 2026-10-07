@@ -18,9 +18,9 @@ const href = computed(() => {
       </div>
       <figure v-if="b.image?.filename" :class="['sb-split__media', { 'has-inset': b.inset_image?.filename }]">
         <component :is="href ? 'a' : 'div'" :href="href || undefined" class="sb-split__frame">
-          <img :src="sbImg(b.image, 720)" :srcset="sbSrcset(b.image, 720)" :alt="b.image.alt || ''" loading="lazy">
+          <img :src="sbImgCapped(b.image, 720)" :srcset="sbSrcsetW(b.image, [480, 720, 960, 1440])" sizes="(max-width: 1023px) calc(100vw - 40px), 540px" v-bind="sbSizeAttrs(b.image)" :alt="b.image.alt || ''" loading="lazy">
         </component>
-        <img v-if="b.inset_image?.filename" class="sb-split__inset" :src="sbImg(b.inset_image, 320)" :srcset="sbSrcset(b.inset_image, 320)" :alt="b.inset_image.alt || ''" loading="lazy">
+        <img v-if="b.inset_image?.filename" class="sb-split__inset" :src="sbImgCapped(b.inset_image, 320)" :srcset="sbSrcsetW(b.inset_image, [240, 320, 480, 640])" sizes="(max-width: 1023px) 36vw, 205px" v-bind="sbSizeAttrs(b.inset_image)" :alt="b.inset_image.alt || ''" loading="lazy">
         <figcaption v-if="b.image.title" class="sb-caption">{{ b.image.title }}</figcaption>
       </figure>
     </div>

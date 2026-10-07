@@ -193,6 +193,9 @@
 .sb-gallery__body { margin-inline: auto; background: var(--sb-gold); color: #fff; padding: clamp(1.25rem, 3vw, 2rem); max-width: 40rem; }
 .sb-gallery__body .sb-h, .sb-gallery__body h2, .sb-gallery__body h3 { color: var(--sb-navy); }
 .sb-gallery__body:empty { display: none; }
+/* Gallery text card on gold: dark slate text (5.1:1) unless the section sets a valid Text colour
+   (.sb-c--text, below, wins with !important). Beats the mint rich-text colour on photo grounds. */
+.sb-section.sb-gallery .sb-gallery__body.sb-rt { color: var(--sb-slate); }
 .sb-gallery--captioned .sb-wrap { text-align: center; }
 .sb-gallery--captioned .sb-gallery__body { text-align: left; }
 

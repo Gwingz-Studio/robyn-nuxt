@@ -14,6 +14,6 @@ defineProps<{ chrome: any }>()
         <a v-for="item in chrome.footerNav" :key="item.href" :href="item.href">{{ item.label }}</a>
       </nav>
     </div>
-    <div><a href="https://directory.calrainbowchamber.org/los-angeles/arts-entertainment/caleb-stewart?from=badge"  title="Find me on California LGBTQ Chamber of Commerce" target="_blank"><img src="https://directory.calrainbowchamber.org/images/memberbadge.png" style="border: none;"/></a></div>
+    <div><a href="https://directory.calrainbowchamber.org/los-angeles/arts-entertainment/caleb-stewart?from=badge"  title="Find me on California LGBTQ Chamber of Commerce" target="_blank"><img src="https://directory.calrainbowchamber.org/images/memberbadge.png" alt="California LGBTQ Chamber of Commerce member badge" width="200" height="161" loading="lazy" style="border: none;"/></a></div>
   </footer>
 </template>

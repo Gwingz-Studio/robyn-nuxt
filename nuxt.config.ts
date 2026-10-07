@@ -48,6 +48,14 @@ export default defineNuxtConfig({
   css: ['~/assets/css/main.css'],
   vite: { plugins: [tailwindcss()] },
 
+  // No <link rel="prefetch"> hints for lazy chunks (speed fix, 2026-10-07): they load on demand
+  // when needed, exactly as before; this only stops speculative downloads on page load.
+  hooks: {
+    'build:manifest': (manifest) => {
+      for (const key in manifest) manifest[key]!.prefetch = false
+    },
+  },
+
   app: {
     head: {
       htmlAttrs: { lang: 'en' },
@@ -61,9 +69,12 @@ export default defineNuxtConfig({
         { rel: 'preconnect', href: 'https://fonts.gstatic.com', crossorigin: '' },
         { rel: 'stylesheet', href: 'https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&family=Roboto+Condensed:wght@400;500;700&display=swap' },
       ],
-      // Meta Pixel Code (Caleb, 2026-09-29): script and noscript text exactly as given.
+      // Meta Pixel Code (Caleb, 2026-09-29), same ID, init and PageView, and the noscript as given.
+      // Speed fix (2026-10-07, approved): fbq is defined and init + PageView are queued right away,
+      // but fbevents.js itself is only fetched after the window load event, when the browser is idle
+      // (requestIdleCallback, at most 3s wait). The queued PageView fires as soon as it loads.
       script: [
-        { innerHTML: "!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js'); fbq('init', '26876203855319594'); fbq('track', 'PageView');" },
+        { innerHTML: "!function(f,b,e,v,n,t,s){if(f.fbq)return;n=f.fbq=function(){n.callMethod?n.callMethod.apply(n,arguments):n.queue.push(arguments)};if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';n.queue=[];var go=function(){t=b.createElement(e);t.async=!0;t.src=v;s=b.getElementsByTagName(e)[0];s.parentNode.insertBefore(t,s)};var idle=function(){f.requestIdleCallback?f.requestIdleCallback(go,{timeout:3000}):setTimeout(go,1)};b.readyState==='complete'?idle():f.addEventListener('load',idle,{once:!0})}(window,document,'script','https://connect.facebook.net/en_US/fbevents.js'); fbq('init', '26876203855319594'); fbq('track', 'PageView');" },
       ],
       noscript: [
         { innerHTML: ' <img height="1" width="1" src="https://www.facebook.com/tr?id=26876203855319594&ev=PageView&noscript=1"/>' },

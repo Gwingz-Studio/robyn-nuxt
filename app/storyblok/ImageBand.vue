@@ -7,6 +7,6 @@ const colorStyle = computed(() => sectionStyle({ ...b.value, background_image: n
 
 <template>
   <section v-editable="b" :class="[...sectionClasses(b, 'sb-imageband'), 'full-bleed-home', `sb-imageband--${b.height || 'natural'}`, `sb-imageband--${b.fit || 'cover'}`]" v-bind="colorStyle ? { style: colorStyle } : {}">
-    <img v-if="b.image?.filename" :src="sbImg(b.image, 1920)" :srcset="`${sbImg(b.image, 1280)} 1280w, ${sbImg(b.image, 1920)} 1920w, ${sbImg(b.image, 2500)} 2500w`" sizes="100vw" :alt="b.image.alt || ''" loading="lazy">
+    <img v-if="b.image?.filename" :src="sbImgCapped(b.image, 1280, 1920)" :srcset="sbSrcsetW(b.image, [640, 960, 1280, 1920])" sizes="100vw" v-bind="sbSizeAttrs(b.image)" :alt="b.image.alt || ''" loading="lazy">
   </section>
 </template>

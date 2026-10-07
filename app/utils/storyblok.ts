@@ -24,10 +24,14 @@ export function sitePath(url: string): string {
 }
 
 const GW_WIDTHS = [480, 640, 960, 1280, 1920]
+const SQ_WIDTHS = [100, 300, 500, 750, 1000, 1500, 2500]
+const isSbAsset = (url: string) => /^https:\/\/a(-[a-z]+)?\.storyblok\.com\//.test(url) && !/\.(svg|gif)$/i.test(url)
+const isSqCdn = (url: string) => /^https:\/\/images\.squarespace-cdn\.com\//.test(url) && !/[?&]format=/.test(url)
+const rawUrl = (src: string | SbAsset) => (typeof src === 'string' ? src : (src?.filename || ''))
 
 /** Display URL for an image at about `width` CSS px (the browser gets 2x via srcset). */
 export function sbImg(src: string | SbAsset, width = 1280): string {
-  const raw = typeof src === 'string' ? src : (src?.filename || '')
+  const raw = rawUrl(src)
   if (!raw) return ''
   const url = sitePath(raw)
   // Moved to Cloudflare Images (media/manifest.json): named width variant.
@@ -36,12 +40,12 @@ export function sbImg(src: string | SbAsset, width = 1280): string {
     return cfImageUrl(url, `gwr${v}`)
   }
   // Storyblok asset library: image service resize + webp (not for SVG/GIF).
-  if (/^https:\/\/a(-[a-z]+)?\.storyblok\.com\//.test(url) && !/\.(svg|gif)$/i.test(url)) {
+  if (isSbAsset(url)) {
     return `${url}/m/${Math.round(width)}x0/filters:format(webp)`
   }
   // Squarespace CDN: its own width formats.
-  if (/^https:\/\/images\.squarespace-cdn\.com\//.test(url) && !/[?&]format=/.test(url)) {
-    const sq = [100, 300, 500, 750, 1000, 1500, 2500].find(w => w >= width) || 2500
+  if (isSqCdn(url)) {
+    const sq = SQ_WIDTHS.find(w => w >= width) || 2500
     return `${url}?format=${sq}w`
   }
   return url
@@ -51,6 +55,59 @@ export function sbSrcset(src: string | SbAsset, width: number): string | undefin
   const a = sbImg(src, width)
   const b = sbImg(src, width * 2)
   return a && b && a !== b ? `${a} 1x, ${b} 2x` : undefined
+}
+
+/** Pixel size of a Storyblok asset, read from its URL (/f/<space>/<W>x<H>/...). */
+export function sbDims(src: string | SbAsset): { width: number, height: number } | undefined {
+  const m = /^https:\/\/a(?:-[a-z]+)?\.storyblok\.com\/f\/\d+\/(\d+)x(\d+)\//.exec(rawUrl(src))
+  if (!m) return undefined
+  const width = Number(m[1]), height = Number(m[2])
+  return width > 0 && height > 0 ? { width, height } : undefined
+}
+
+/** width/height attributes (aspect ratio for the browser, no layout shift) when the asset size is known. */
+export function sbSizeAttrs(src: string | SbAsset): { width?: number, height?: number } {
+  return sbDims(src) || {}
+}
+
+/** Width that sbImg would actually deliver for a request, never above the asset's own width. */
+function deliver(src: string | SbAsset, width: number, cap: number): { url: string, w: number } | undefined {
+  const raw = rawUrl(src)
+  if (!raw) return undefined
+  const url = sitePath(raw)
+  if (url.startsWith('/') && mediaProvider(url) === 'cfimages') {
+    const v = GW_WIDTHS.find(w => w >= width && w <= cap) || [...GW_WIDTHS].reverse().find(w => w <= cap) || GW_WIDTHS[0]!
+    return { url: cfImageUrl(url, `gwr${v}`), w: v }
+  }
+  if (isSbAsset(url)) {
+    const own = sbDims(src)?.width
+    const w = Math.round(Math.min(width, cap, own || Infinity))
+    return { url: sbImg(src, w), w }
+  }
+  if (isSqCdn(url)) {
+    const v = SQ_WIDTHS.find(w => w >= width && w <= cap) || [...SQ_WIDTHS].reverse().find(w => w <= cap) || SQ_WIDTHS[0]!
+    return { url: `${url}?format=${v}w`, w: v }
+  }
+  return undefined
+}
+
+/**
+ * Width-based srcset ("url 640w, ...") for the widths asked for, never above `cap` px and never
+ * above the asset's own width. Undefined when the source has no resizable versions.
+ */
+export function sbSrcsetW(src: string | SbAsset, widths: number[], cap = Math.max(...widths)): string | undefined {
+  const seen = new Map<number, string>()
+  for (const want of widths) {
+    const d = deliver(src, want, cap)
+    if (d && !seen.has(d.w)) seen.set(d.w, d.url)
+  }
+  if (seen.size < 2) return undefined
+  return [...seen].sort((a, b) => a[0] - b[0]).map(([w, u]) => `${u} ${w}w`).join(', ')
+}
+
+/** Single URL at about `width` px, capped at `cap` and at the asset's own width. */
+export function sbImgCapped(src: string | SbAsset, width: number, cap = width): string {
+  return deliver(src, width, cap)?.url || sbImg(src, width)
 }
 
 /** Full-size URL (downloads, "open image" links). */
