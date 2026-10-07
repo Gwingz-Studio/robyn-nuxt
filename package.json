@@ -12,6 +12,8 @@
     "lint:copy": "node scripts/copy-lint.mjs .output/public",
     "check:redirects": "node scripts/check-redirects.mjs",
     "deploy:preview": "npm run build && node scripts/copy-lint.mjs .output/public && wrangler deploy",
+    "build:home": "node scripts/build-home.mjs",
+    "deploy:home": "node scripts/test-home-routing.mjs && node scripts/build-home.mjs && node scripts/copy-lint.mjs .output/public && wrangler deploy -c wrangler.home.jsonc",
     "postinstall": "nuxt prepare"
   },
   "dependencies": {
