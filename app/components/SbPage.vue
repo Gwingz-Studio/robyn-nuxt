@@ -28,7 +28,8 @@ if (error.value || !data.value?.story) {
 const story = ref<any>(data.value.story)
 const content = computed(() => story.value?.content || {})
 /*
- * Page-level HERO VIDEO (Storyblok field `background_image`, renamed by Caleb). When set it is the
+ * Page-level hero video: "Stream Video ID" (hero_stream_id, Cloudflare Stream) or else the HERO VIDEO
+ * file (Storyblok field `background_image`, renamed by Caleb). When set it is the
  * page's hero, like the old Squarespace hero (muted autoplay loop, cover, no controls):
  *  - page has a hero block: a video replaces that block's background_video (its photo stays as the
  *    poster/fallback); an image becomes the hero's photo (the block's own video, if any, still plays).
@@ -37,6 +38,10 @@ const content = computed(() => story.value?.content || {})
  */
 const VIDEO_URL = /\.(mp4|webm|mov|m4v|m3u8)(\?|#|$)/i
 const pageMedia = computed(() => {
+  // "Stream Video ID" (hero_stream_id) wins over the uploaded HERO VIDEO file; an unreadable value
+  // is ignored and the file (or the blocks as authored) is used instead.
+  const sid = streamIdFrom(content.value.hero_stream_id)
+  if (sid) return { url: sid, asset: null, isVideo: true }
   const asset = content.value.background_image
   const url = String(asset?.filename || '').trim()
   if (!url) return null
@@ -46,7 +51,14 @@ const body = computed<any[]>(() => {
   const list = (content.value.body || []).filter((b: any) => b && b.component)
   const m = pageMedia.value
   if (!m) return list
-  const apply = (h: any) => m.isVideo ? { ...h, background_video: m.url } : { ...h, background_image: m.asset }
+  const apply = (h: any) => {
+    if (!m.isVideo) return { ...h, background_image: m.asset }
+    const out = { ...h, background_video: m.url }
+    // Stream video with no hero photo: Stream's own thumbnail is the poster while it loads.
+    const sid = streamIdFrom(m.url)
+    if (sid && !h.background_image?.filename) out.background_image = { filename: `https://${STREAM_CUSTOMER}.cloudflarestream.com/${sid}/thumbnails/thumbnail.jpg?height=1080` }
+    return out
+  }
   const i = list.findIndex((b: any) => b.component === 'hero')
   if (i >= 0) return list.map((b: any, j: number) => j === i ? apply(b) : b)
   const pageHero = { component: 'hero', _uid: `page-hero-${story.value?.id || props.slug}`, title: '', show_title: false, height: 'tall', laurels: [], logo: { filename: '' }, background_image: { filename: '' }, background_video: '' }

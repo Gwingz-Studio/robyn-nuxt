@@ -9,7 +9,8 @@
 const props = withDefaults(defineProps<{ video?: string, poster?: string, background?: boolean, autoplay?: boolean, title?: string }>(), {
   video: '', poster: '', background: false, autoplay: false, title: 'Golden Wings video',
 })
-const v = computed(() => String(props.video || '').trim())
+// Stream ID, Stream URL or pasted embed code -> bare ID; other http(s) URLs kept; anything else ignored.
+const v = computed(() => videoSource(props.video))
 const isStream = computed(() => /^[a-f0-9]{32}$/i.test(v.value))
 const useIframe = computed(() => isStream.value && !props.background)
 const hlsUrl = computed(() => {
