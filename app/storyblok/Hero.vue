@@ -9,6 +9,13 @@ const LAUREL_SIZES = '(max-width: 1023px) 100px, 205px'
 // Style tab colours (heading over the video; background only shows with no photo/video).
 const heroStyle = computed(() => { const v = colorVars(b.value); return Object.keys(v).length ? v : undefined })
 const laurels = computed(() => (b.value.laurels || []).filter((a: any) => a?.filename))
+// Laurels hosted on the Squarespace CDN have no size in their URL: read it on the server so each
+// laurel gets width/height and the laurel rows (and the logo below) do not jump while loading.
+const laurelSrc = (l: any) => sbImgCapped(l, 300)
+const { data: laurelDims } = await useAsyncData(`laurel-dims:${b.value._uid || ''}`, () => probeDims(
+  laurels.value.filter((l: any) => !sbDims(l)).map(laurelSrc).filter(u => /^https:\/\/images\.squarespace-cdn\.com\//.test(u)),
+))
+const laurelAttrs = (l: any) => sbDims(l) || laurelDims.value?.[laurelSrc(l)] || {}
 </script>
 
 <template>
@@ -20,7 +27,7 @@ const laurels = computed(() => (b.value.laurels || []).filter((a: any) => a?.fil
     <div class="sb-hero__inner">
       <h1 v-if="b.title" :class="b.show_title ? 'sb-hero__title' : 'sr-only'">{{ b.title }}</h1>
       <div v-if="laurels.length" class="sb-hero__laurels" aria-label="Festival laurels">
-        <img v-for="l in laurels" :key="l.filename" :src="sbImgCapped(l, 300)" :srcset="sbSrcsetW(l, [300, 500])" :sizes="LAUREL_SIZES" v-bind="sbSizeAttrs(l)" :alt="l.alt || ''" loading="lazy" fetchpriority="low">
+        <img v-for="l in laurels" :key="l.filename" :src="laurelSrc(l)" :srcset="sbSrcsetW(l, [300, 500])" :sizes="LAUREL_SIZES" v-bind="laurelAttrs(l)" :alt="l.alt || ''" loading="lazy" fetchpriority="low">
       </div>
       <img v-if="b.logo?.filename" class="sb-hero__logo" :src="sbImgCapped(b.logo, 960)" :srcset="sbSrcsetW(b.logo, [480, 640, 960, 1280, 1920])" :sizes="LOGO_SIZES" v-bind="sbSizeAttrs(b.logo)" :alt="b.logo.alt || ''">
     </div>
