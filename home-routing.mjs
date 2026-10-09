@@ -10,5 +10,8 @@ export function ownedByNuxt(pathname) {
   if (PAGES.has(pathname.replace(/\/+$/, ''))) return true
   if (pathname.startsWith('/_nuxt/')) return true
   if (pathname === '/api/storyblok' || pathname.startsWith('/api/storyblok/')) return true
+  // Video pages (/videos, /videos/<slug>, with or without trailing slash) and the video sitemap.
+  if (/^\/videos(\/[^/]+)?\/?$/.test(pathname)) return true
+  if (pathname === '/sitemap-videos.xml') return true
   return OWN_FILES.has(pathname)
 }

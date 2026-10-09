@@ -3,7 +3,7 @@ const route = useRoute()
 const chrome = await useSiteCopy('chrome')
 const isHome = computed(() => route.path === '/')
 // Storyblok-edited pages draw their own full-bleed sections.
-const isStoryblok = computed(() => STORYBLOK_ROUTES.includes(route.path.replace(/\/+$/, '') || '/'))
+const isStoryblok = computed(() => STORYBLOK_ROUTES.includes(route.path.replace(/\/+$/, '') || '/') || isVideoPath(route.path))
 </script>
 
 <template>

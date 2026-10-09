@@ -28,6 +28,12 @@ const prerenderRoutes = contentRoutes.filter(r => !storyblokRoutes.includes(r))
 // Header/footer copy from content/site/chrome.md, bundled so SSR pages need no content database.
 const chromeMd = fs.readFileSync(path.resolve('content/site/chrome.md'), 'utf8')
 const siteChrome = parseYaml(chromeMd.split(/^---\s*$/m)[1] || '') as Record<string, unknown>
+// 404 copy (content/site/not-found.md), bundled for the server-rendered /videos/<slug> not-found view.
+const notFoundMd = fs.readFileSync(path.resolve('content/site/not-found.md'), 'utf8')
+const siteNotFound = parseYaml(notFoundMd.split(/^---\s*$/m)[1] || '') as Record<string, unknown>
+
+// Video pages (Storyblok folder "videos"): server-rendered, published stories only, never prerendered.
+const isVideoRoute = (p: string) => /^\/(videos(\/[^/]+)?|sitemap-videos\.xml)$/.test(p.replace(/[?#].*$/, '').replace(/\/+$/, ''))
 
 export default defineNuxtConfig({
   compatibilityDate: '2026-07-22',
@@ -44,7 +50,7 @@ export default defineNuxtConfig({
     componentsDir: '~/storyblok',
   },
 
-  appConfig: { siteChrome },
+  appConfig: { siteChrome, siteNotFound },
   css: ['~/assets/css/main.css'],
   vite: { plugins: [tailwindcss()] },
 
@@ -143,6 +149,7 @@ export default defineNuxtConfig({
       ignore: [
         '/api',
         (p: string) => storyblokRoutes.includes(p.replace(/[?#].*$/, '').replace(/\/+$/, '') || '/'),
+        isVideoRoute,
         '/cdn-cgi',
         (p: string) => !!redirects[p.replace(/\/+$/, '') || '/'],
         /^\/indie-doc-journey\/(category|tag)\//,

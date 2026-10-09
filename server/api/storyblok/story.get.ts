@@ -7,21 +7,10 @@
  * at most one hour old), so drafts never leak to the public preview.
  * The delivery token stays on the server (NUXT_STORYBLOK_ACCESS_TOKEN, Worker secret).
  */
-import { createHash } from 'node:crypto'
 import { serverStoryblokClient } from '#storyblok/server'
+import { validEditorToken } from '../../utils/sbEditor'
 
 const SLUGS = new Set(['home', 'film', 'about-the-film', 'press-kit', 'site-settings'])
-const SPACE_ID = '295612352463495'
-
-function validEditorToken(q: Record<string, any>, accessToken: string): boolean {
-  const spaceId = String(q['_storyblok_tk[space_id]'] ?? q._storyblok_tk?.space_id ?? '')
-  const ts = String(q['_storyblok_tk[timestamp]'] ?? q._storyblok_tk?.timestamp ?? '')
-  const token = String(q['_storyblok_tk[token]'] ?? q._storyblok_tk?.token ?? '')
-  if (spaceId !== SPACE_ID || !/^\d+$/.test(ts) || !token) return false
-  if (Number(ts) < Math.floor(Date.now() / 1000) - 3600) return false
-  const expected = createHash('sha1').update(`${spaceId}:${accessToken}:${ts}`).digest('hex')
-  return expected === token
-}
 
 export default defineEventHandler(async (event) => {
   const q = getQuery(event) as Record<string, any>

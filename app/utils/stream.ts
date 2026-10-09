@@ -38,3 +38,41 @@ export function videoSource(input: unknown): string {
   const s = String(input ?? '').trim()
   return /^https?:\/\/\S+$/i.test(s) ? s : ''
 }
+
+/** Stream HLS manifest (VideoObject contentUrl). */
+export function streamHls(uid: string) {
+  return `https://${STREAM_CUSTOMER}.cloudflarestream.com/${uid}/manifest/video.m3u8`
+}
+
+/** Stream player page. Always with a query string: Stream's robots.txt blocks URLs ending in /iframe. */
+export function streamEmbed(uid: string) {
+  return `https://${STREAM_CUSTOMER}.cloudflarestream.com/${uid}/iframe?preload=metadata`
+}
+
+/**
+ * Stable thumbnail for a video story: the uploaded thumbnail image if any, else the Stream frame
+ * at `thumbnail_time` seconds (first frame when empty).
+ */
+export function videoThumb(c: any, height = 720): string {
+  const img = String(c?.thumbnail?.filename || '').trim()
+  if (img) return img
+  const uid = streamIdFrom(c?.stream_id)
+  if (!uid) return ''
+  const t = Number.parseFloat(String(c?.thumbnail_time ?? ''))
+  const time = Number.isFinite(t) && t > 0 ? `time=${Math.round(t * 10) / 10}s&` : ''
+  return `https://${STREAM_CUSTOMER}.cloudflarestream.com/${uid}/thumbnails/thumbnail.jpg?${time}height=${height}`
+}
+
+/** Storyblok datetime ("2026-09-25 19:59", UTC) -> ISO 8601 ("2026-09-25T19:59:00Z"); '' if unset. */
+export function sbDateIso(v: unknown): string {
+  const m = String(v ?? '').trim().match(/^(\d{4}-\d{2}-\d{2})(?:[ T](\d{2}:\d{2})(?::(\d{2}))?)?/)
+  if (!m) return ''
+  return `${m[1]}T${m[2] || '00:00'}:${m[3] || '00'}Z`
+}
+
+/** Seconds -> ISO 8601 duration (PT1M58S). */
+export function isoDuration(sec: number): string {
+  const s = Math.max(1, Math.round(sec))
+  const h = Math.floor(s / 3600), m = Math.floor((s % 3600) / 60), r = s % 60
+  return `PT${h ? `${h}H` : ''}${m ? `${m}M` : ''}${r ? `${r}S` : ''}`
+}
